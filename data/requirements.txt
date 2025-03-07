@@ -1,0 +1,9 @@
+astropy
+jupyter
+kaggle
+matplotlib
+numpy
+pandas
+# skforecast
+scikit-learn
+statsmodels

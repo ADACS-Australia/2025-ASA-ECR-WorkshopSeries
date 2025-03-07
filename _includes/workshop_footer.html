@@ -1,0 +1,31 @@
+{% comment %}
+  Footer for a standard workshop.
+{% endcomment %}
+<footer>
+  <hr/>
+  <div class="row">
+    <div class="col-md-4" align="left">
+      <h4>
+	Copyright &copy; 2016–{{ 'now' | date: "%Y" }}
+	{% if site.carpentry == "swc" %}
+	<a href="{{ site.swc_site }}">Software Carpentry</a>
+	{% elsif site.carpentry == "dc" %}
+	<a href="{{ site.dc_site }}">Data Carpentry</a>
+	{% elsif site.carpentry == "lc" %}
+	<a href="{{ site.lc_site }}">Library Carpentry</a>
+	{% elsif site.carpentry == "cp" %}
+	<a href="{{ site.carpentries_site }}">The Carpentries</a>
+	{% endif %}
+      </h4>
+    </div>
+    <div class="col-md-4" align="center">
+      <a title="GDPR-compliant Web Analytics" href="https://clicky.com/101447658"><img alt="Clicky" src="//static.getclicky.com/media/links/badge.gif" border="0" /></a>
+      <script async data-id="101447658" src="//static.getclicky.com/js"></script>
+    </div>
+    <div class="col-md-4" align="right">
+      <h4>
+	<a href="mailto:{{ site.email }}">Contact The Carpentries</a>
+      </h4>
+    </div>
+  </div>
+</footer>
