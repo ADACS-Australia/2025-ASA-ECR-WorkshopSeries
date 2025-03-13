@@ -35,13 +35,15 @@ This course assumes that you have basic proficiency in python.
 
 Software requirements for running on your own computer:
 - Python 3.8+ with the following modules ([requirements.txt]({{page.root}}{% link data/requirements.txt%}))
-  - astropy
-  - jupyter
-  - matplotlib
   - numpy
   - pandas
   - <others>
-- A integrated development environment ([IDE](https://en.wikipedia.org/wiki/Integrated_development_environment)) or text editor of choice
+- make
+  - [Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
+  - OSX `brew install make`
+  - Linux `sudo apt install build-essential` (though likely already installed)
+- Nextflow ([installation instructions](https://www.nextflow.io/docs/latest/getstarted.html#installation))
+- An integrated development environment ([IDE](https://en.wikipedia.org/wiki/Integrated_development_environment)) or text editor of choice
   - We recommend [Visual Studio Code](https://code.visualstudio.com/)
 
 
