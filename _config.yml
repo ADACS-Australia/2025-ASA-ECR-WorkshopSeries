@@ -53,7 +53,7 @@ pilot: false
 # Most workshops don't use extra pages. More information about extra
 # pages are included in the README:
 # https://github.com/carpentries/workshop-template#creating-extra-pages
-title: "<title>"
+title: "Smarter, Faster, and More Reproducible Science for Early/Mid-Career Astronomers"
 
 #------------------------------------------------------------
 # Incubator workshop settings (only relevant for workshops teaching a lesson
@@ -108,7 +108,7 @@ training_site: "https://carpentries.github.io/instructor-training"
 workshop_repo: "https://github.com/carpentries/workshop-template"
 workshop_site: "https://carpentries.github.io/workshop-template"
 cc_by_human: "https://creativecommons.org/licenses/by/4.0/"
-ether_pad: "https://pad.carpentries.org/2024_05_02_SolarStellarSpacePhysics_ML_Workshop"
+ether_pad: "https://pad.carpentries.org/2025-ADACS-ECR-WorkshopSeries"
 
 # Surveys.
 pre_survey: ""
