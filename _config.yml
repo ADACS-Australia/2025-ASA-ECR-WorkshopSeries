@@ -159,3 +159,7 @@ highlighter: rouge
 # Order the episodes since alpha-num sorting will fail
 episode_order:
 - Setup
+- Workshop1
+- Workshop2
+- Workshop3
+- Workshop4
