@@ -17,11 +17,17 @@ We wish to acknowledge the custodians of the land we reside on. These lessons we
 
 
 ## Overview
-This training was developed by [ADACS](https://adacs.org.au) at the request of <person>.
+This training was developed by [ADACS](https://adacs.org.au) in collaboration with the ASA ECR chapter.
 
 This workshop has been developed in the style of Carpentries (hence the site layout) but is not an official Carpentries lesson.
 Some of the content is intended for learners to read, think, and ask questions.
 The workshop is designed to have three lessons per day dedicated to explaining and demonstrating skills, followed by an afternoon session of skills practice where people can work on their group project.
+
+### Workshop Format
+
+This workshop is deisnged to be consumed in two modes. The primary mode being an online collaborative facilitated event, for interactive learning, and the secondary mode as a self-paced activity.
+Each of the four workshops are designed to fit into a 2 hour timeslot, with 90 mins of content and 30 mins of additional time to allow for extended questions and discussion, but also in case of technical difficulties.
+There are four workshops in total, and they will be presented as an "on" session, where we follow through the workshop content, and an "off" week where there is no aditional content, with the aim of giving participants time to digest and try out many of the lessons that they have learned, and then have a follow up discussion about troubles they have found or further ideas that they had.
 
 ## Assumed knowledge / required software
 This course assumes that you have basic proficiency in python.
@@ -80,7 +86,7 @@ See the [ASA2022 code of conduct](https://www.asa2022.org/code-of-conduct) and t
 > ## Introduce yourselves
 > ![IceBreaker](https://ichef.bbci.co.uk/news/976/cpsprodpb/D6B5/production/_123956945_225107a3-318d-4c2e-b040-2dcd03c4698a.jpg){: width="400"}
 >
-> Introduce yourself to your peers by telling us your name, the title of your most recently published work, and <some question>.
+> Introduce yourself to your peers by telling us your name, and 1-2 items that you hope to get out of this workshop.
 >
-> Do this in person and via the [etherpad]({{site.ether_pad}}).
+> Do this via the [etherpad]({{site.ether_pad}}).
 {: .challenge}
