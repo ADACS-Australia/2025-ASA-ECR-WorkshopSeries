@@ -53,6 +53,22 @@ Automation helps streamline repetitive tasks, reduce errors, and save time, allo
   - **Version control:** Use Git to track changes to scripts and workflows, ensuring that you can revert to previous versions if needed.
   - **Continuous integration:** Set up continuous integration (CI) pipelines to automatically run tests and analyses whenever changes are made to your code or data.
 
+### Leveraging Large Language Models (LLMs) for Automation
+Large Language Models (LLMs) like ChatGPT and (GitHub) CoPilot can assist in automating various aspects of astronomy research by providing intelligent suggestions, generating code snippets, and even automating documentation tasks. As a bonus, many of these are free for academic use, or are included as part of your organisations enterprise software agreements. Here are some ways LLMs can be utilized:
+
+- **Code Generation:** LLMs can generate code snippets for common tasks, reducing the time spent writing boilerplate code.
+- **Data Analysis:** LLMs can assist in writing complex data analysis scripts by providing suggestions and examples.
+- **Documentation:** Automatically generate documentation for code, workflows, and research findings, ensuring consistency and saving time.
+- **Troubleshooting:** Provide solutions and debugging tips for common issues encountered in workflow automation.
+- **Natural Language Queries:** Allow researchers to interact with their data and workflows using natural language queries, making it easier to extract insights and perform tasks without deep programming knowledge.
+
+> Verify LLM outputs
+> A very important note about the use of LLMs (or any assistive tools) is that their output is not guaranteed to be: error free, up-to-date, appropriate, or logically sound.
+> You are ultimately responsible for your research and software and so you should carefully validate the information that you get from these tools.
+> Think of these tools as an untrusted colleague or random stack-overflow contributor with low reputation - you need to think critically about what is being presented to you.
+>
+{: .caution}
+
 By incorporating these automation techniques into their research workflows, astronomers can improve the efficiency, consistency, and reproducibility of their work, ultimately leading to more reliable and impactful scientific discoveries.
 
 ### Benefits of workflow management:
