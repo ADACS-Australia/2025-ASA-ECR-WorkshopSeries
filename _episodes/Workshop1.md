@@ -245,11 +245,55 @@ Something like a python script that checks the before/after state between each w
 
 A nextflow workflow gives a nice balance between the simplicity of Make and the adaptability of Python.
 
-### Reproducible Environments
-#### Python environments
+## Reproducible Environments
+
+### Project structure
+Structuring your files and directories properly is crucial for maintaining a clean, organized, and manageable Python project. A well-structured project makes it easier to navigate, understand, and collaborate with others. Here are some key points to consider:
+
+1. **Root Directory**: The root directory should contain essential files like `README.md`, `setup.py`, and a license file. These files provide important information about the project, installation instructions, and licensing details.
+
+2. **Source Code Directory**: Create a dedicated directory (e.g., `src` or the project name) for your source code. This directory should contain all the Python modules and packages related to your project.
+
+3. **Tests Directory**: Include a separate directory (e.g., `tests`) for your test cases. Organizing tests in a dedicated directory helps ensure that they are easily accessible and maintainable.
+
+4. **Configuration Files**: Store configuration files (e.g., `config.yaml`, `.env`) in a dedicated directory (e.g., `config`). This keeps configuration settings separate from the source code and makes it easier to manage different environments.
+
+5. **Data Directory**: If your project involves data processing, create a directory (e.g., `data`) to store raw and processed data files. This helps keep data organized and prevents cluttering the source code directory.
+
+6. **Documentation Directory**: Maintain a directory (e.g., `docs`) for project documentation. This can include user guides, API references, and other relevant documentation.
+
+7. **Virtual Environment**: Use a virtual environment to manage dependencies. Create a directory (e.g., `venv`) for the virtual environment to ensure that dependencies are isolated and do not interfere with other projects.
+
+Example project structure:
+```
+my_project/
+├── config/
+│   └── config.yaml
+├── data/
+│   ├── raw/
+│   └── processed/
+├── docs/
+│   └── index.md
+├── src/
+│   ├── __init__.py
+│   └── main.py
+├── tests/
+│   ├── __init__.py
+│   └── test_main.py
+├── venv/
+├── .gitignore
+├── README.md
+├── requirements.txt
+└── setup.py
+```
+
+By following these guidelines, you can create a well-organized project structure that enhances readability, maintainability, and collaboration.
+
+
+### Python environments
 Python environments are useful because they allow you to create isolated spaces for your projects, ensuring that dependencies and packages do not conflict with each other. This is particularly important when working on multiple projects that require different versions of the same package or library. By using environments, you can maintain consistency and reproducibility in your workflows.
 
-### Setting up a Conda environment
+#### Setting up a Conda environment
 Conda is a popular package and environment management system that allows you to create and manage isolated environments.
 
 1. **Install Conda**: If you don't have Conda installed, you can download and install it from the [Anaconda](https://www.anaconda.com/products/distribution) website or use [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for a minimal installation.
@@ -274,7 +318,7 @@ Conda is a popular package and environment management system that allows you to 
   conda deactivate
   ```
 
-### Setting up a virtual environment with `venv`
+#### Setting up a virtual environment with `venv`
 The `venv` module is included in Python's standard library and allows you to create lightweight virtual environments.
 
 1. **Create a new environment**:
@@ -341,10 +385,10 @@ In this example:
 By using Docker, you can ensure that your Python program runs in a consistent environment, regardless of where it is deployed.
 
 
-### Workflow Tools in Action
-#### Introduction to Make and Nextflow
+## Workflow Tools in Action
+### Introduction to Make and Nextflow
 
-#### Make
+### Make
 Make is a build automation tool that helps manage and execute workflows by defining a series of tasks and their dependencies. It is particularly useful for scientific research because:
 
 - **Simplicity:** Makefiles are straightforward to write and understand, making it easy to define workflows.
@@ -352,7 +396,7 @@ Make is a build automation tool that helps manage and execute workflows by defin
 - **Efficiency:** Make only re-executes tasks that have changed, saving time and computational resources.
 - **Portability:** Makefiles can be shared and executed on different systems, ensuring consistency across environments.
 
-#### Creating a Simple Workflow with Make**
+### Creating a Simple Workflow with Make**
 ```makefile
 # Define targets and dependencies
 all: clean_data.csv
@@ -365,7 +409,7 @@ clean:
     rm -f clean_data.csv
 ```
 
-#### Nextflow
+### Nextflow
 Nextflow is a workflow management system designed for scalable and reproducible scientific workflows. It offers several advantages for researchers:
 
 - **Scalability:** Nextflow can handle complex workflows with many tasks and dependencies, and it supports parallel execution to speed up processing.
@@ -377,7 +421,7 @@ Nextflow is a workflow management system designed for scalable and reproducible 
 By using tools like Make and Nextflow, scientists can create efficient, reproducible, and scalable workflows, ultimately enhancing the reliability and impact of their research.
 
 
-#### EXample: Using Nextflow for Workflow Management**
+### EXample: Using Nextflow for Workflow Management**
 ```groovy
 # Define a simple Nextflow workflow
 process preprocess {
@@ -429,7 +473,7 @@ workflow {
 - **Complexity:** Can be more complex to set up and manage compared to Make for straightforward tasks.
 
 
-### Discussion & Problem Solving
+## Discussion & Problem Solving
 - **Recap of key points:**  
   Summarize the main takeaways from the workshop.
 - **Address challenges in automation:**  
