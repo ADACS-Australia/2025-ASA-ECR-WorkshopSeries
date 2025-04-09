@@ -1,5 +1,5 @@
 ---
-title: "Working Smarter - Building on Past Success"
+title: "How to Build on Past Success"
 teaching: 45
 exercises: 45
 questions:

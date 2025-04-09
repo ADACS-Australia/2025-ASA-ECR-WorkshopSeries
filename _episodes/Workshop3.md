@@ -1,5 +1,5 @@
 ---
-title: "Working Faster - Accelerating Research"
+title: "How to Accelerate your Research"
 teaching: 45
 exercises: 45
 questions:

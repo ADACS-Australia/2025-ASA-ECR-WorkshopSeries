@@ -1,5 +1,5 @@
 ---
-title: "Automating the Astronomy Workflow"
+title: "How to Automate the Boring Bits"
 teaching: 45
 exercises: 45
 questions:
@@ -16,6 +16,8 @@ keypoints:
 - "Creating isolated and reproducible environments is crucial for reliable research."
 - "Logging and checkpointing are important for tracking progress and recovering from failures."
 ---
+
+What is boring, data engineering is boring! Downloading and cleaning data is just tedious.
 
 ## Workshop outline:
 

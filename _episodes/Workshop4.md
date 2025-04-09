@@ -1,5 +1,5 @@
 ---
-title: "Leveraging GitHub for Research"
+title: "How to Leverage GitHub for Research"
 teaching: 45
 exercises: 45
 questions:
