@@ -45,22 +45,17 @@ Software requirements for running on your own computer:
 - Nextflow ([installation instructions](https://www.nextflow.io/docs/latest/getstarted.html#installation))
 - An integrated development environment ([IDE](https://en.wikipedia.org/wiki/Integrated_development_environment)) or text editor of choice
   - We recommend [Visual Studio Code](https://code.visualstudio.com/)
-
-
-If the above doesn't work for you or you would like to work on a cloud system then we recommend that you use [Google Colaboratory](https://colab.google/), it is free and requires only a Google account to access.
-
+  - Vim/Emac/Nano also works fine if that is your preference!
 
 Assumed knowledge (links for info):
 
 - Python scripting [SWC Lesson](http://swcarpentry.github.io/python-novice-gapminder/), [ADACS Lesson](https://adacs.org.au/courses/introduction-to-python/)
+- Basic bash usage  [SWC Lesson](https://swcarpentry.github.io/shell-novice/)
 
 ## Engagement
 This workshop is all about learning by doing.
 We will be engaging in live coding type exercises for most of the workshop, and we will set challenges and exercises for you to complete in groups.
 The more you engage with your fellow learners and the more questions that you ask, the more that you will get out of this workshop.
-
-We will be using sticky notes for in-person participants to indicate their readiness to move on: please stick them on your laptop screen to indicate if you need help or are done and ready to move ahead.
-For those joining online we'll be using emotes to indicate the same.
 
 We will use a shared document ([etherpad]({{site.ether_pad}})) to manage and record many of our interactions.
 
@@ -82,13 +77,4 @@ We ask that you follow these guidelines:
 - Critique ideas rather than individuals.
 - Do not engage in tech-shaming.
 
-See the [ASA2022 code of conduct](https://www.asa2022.org/code-of-conduct) and the [Software Carpentries code of conduct](https://docs.carpentries.org/topic_folders/policies/code-of-conduct.html) for more information.
-
-
-> ## Introduce yourselves
-> ![IceBreaker](https://ichef.bbci.co.uk/news/976/cpsprodpb/D6B5/production/_123956945_225107a3-318d-4c2e-b040-2dcd03c4698a.jpg){: width="400"}
->
-> Introduce yourself to your peers by telling us your name, and 1-2 items that you hope to get out of this workshop.
->
-> Do this via the [etherpad]({{site.ether_pad}}).
-{: .challenge}
+See the [Software Carpentries code of conduct](https://docs.carpentries.org/topic_folders/policies/code-of-conduct.html) for more information.
