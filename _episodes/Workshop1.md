@@ -125,7 +125,7 @@ We will firstly look at how we would do all of this manually (because thats how 
 > ## What tools can we use?
 > Excel or similar is a good enough tool, widely available, that you can use to inspect and edit your data.
 >
-> ![AT20G Manual Editing]({{page.root}}{% link fig/AT20G_Manual_editing.png%})
+> ![AT20G Manual Editing]({{page.root}}{% link fig/AT20G_Manual_Editing.png%})
 >
 > If a new version of that catalogue comes out (same format, adjusted values or more rows), how long does it take to redo this?
 > 
