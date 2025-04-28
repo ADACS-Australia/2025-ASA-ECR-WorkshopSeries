@@ -307,15 +307,14 @@ Note: the ordering of the match patterns doesn't affect the content of the outpu
 
 
 > ## my workflow file
-> ```
+> ```bash
 > # Download the data
 > wget https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
 > # Save the meta-data
-> grep -e '^#' AT20G.tsv> AT20G_header.txt
+> grep -e '^#' AT20G.tsv > AT20G_header.txt
 > # Save just the table with a 1 line header
 > grep -v -e '^#' -e '^-' -e '^deg' -e '^$' AT20G.tsv > AT20G_table.tsv
 > ```
-> {: .language-bash}
 > Note that I've added some comments (starting with #) to this file so that I can recall what the different commands are supposed to be doing.
 {: .solution}
 
@@ -718,16 +717,21 @@ Once we have this we can make a file `requirements.txt` which lists (one per lin
 >
 {: .callout}
 
+To install libraries into an environment using this file, run:
+```bash
+pip install -r requirements.txt
+```
+
 In our directory we now have a few files and directories:
 ```bash
-.
-..
-.env/
+./
+../
 AT20G.tsv
 AT20G_header.txt
 AT20G_table.tsv
 AT20G_final.csv
 clean_AT20G.py
+.env/
 requirements.txt
 workflow.sh
 ```
@@ -780,22 +784,173 @@ Not all of the directores and files listed above are essntial for every project,
 > 4. Move all the data files into the relevant directories.
 > 5. Update your `workflow.sh` file so that it will work with the new directory structure.
 >
+> Note that you'll have to update the paths to the various files now that you have moved them!
+>
+> > ## Updating `wget` to save the file in a different location
+> > Use `wget -O path/to/file.txt url` to tell `wget` to save the file in a given location.
+> {: .solution}
 {: .challenge}
 
-### Workflow design principles
-Understand the basics of designing a robust workflow, including task dependencies, parallel processing, and error handling.
+## Further workflow automation
+A single script will suffice for simple and short running workflows.
+If the workflow breaks part way, you can make an adjustment and then restart from the begninning without it taking up much of your time.
+However, as your workflow gets more complicated and takes longer to run, you might not want to "restart and run all" every time you make a change.
+For example, you update the cleaning and filtering script, but you don't want to download the data again.
 
-#### Task dependencies
-When designing a workflow, it's important to identify and define the dependencies between tasks. This ensures that tasks are executed in the correct order and that each task has the necessary inputs available before it starts. For example, data preprocessing should occur before data analysis, as the analysis depends on the cleaned data.
+In the remainder of this workshop we'll explore the next level of automation which is an orchestration tool called `make`.
 
-Exercise: Draw a dependency graph for a workflow.
+### Make
+Make is a build automation tool that helps manage and execute workflows by defining a series of tasks and their dependencies. It is particularly useful for scientific research because:
 
-#### Parallel processing
-To improve efficiency, consider which tasks can be executed in parallel. Parallel processing allows multiple tasks to run simultaneously, reducing the overall time required to complete the workflow. Tools like Nextflow and Snakemake can help manage parallel execution and resource allocation.
+- **Simplicity:** Makefiles are straightforward to write and understand, making it easy to define workflows.
+- **Dependency Management:** Make ensures that tasks are executed in the correct order based on their dependencies, which is crucial for reproducible research.
+- **Efficiency:** Make only re-executes tasks that have changed, saving time and computational resources.
+- **Portability:** Makefiles can be shared and executed on different systems, ensuring consistency across environments.
 
-Exercise: Identify tasks that can be run simultaneously without interfering with each other.
+### Creating a Simple Workflow with Make**
+```makefile
+# Define targets and dependencies
+all: clean_data.csv
 
-#### Logging
+clean_data.csv: raw_data.csv
+    python preprocess.py raw_data.csv clean_data.csv
+
+# Define a clean target to remove generated files
+clean:
+    rm -f clean_data.csv
+```
+
+With the above script we have a number of entry points:
+- the default entry point "all", which will kick off our workflow.
+- a dummy entrypoint "clean" which removes all the intermediate/final data products to give us a "clean" slate.
+- a specific file that we wish to create.
+
+`make` was dessigned for managing the compilation of code in languages like c/c++/Fortran, and assumes that each stage in the workflow involves the creation of a file (target), which may or may not rely on the existance of other files (prerequisites).
+A `makefile` describes each task as:
+```makefile
+<target>: <prerequisite1> <prerequesite2> ...
+    instructions to create target file
+```
+Note: The indentation is a single tab character.
+
+### Make
+Make is a build automation tool that helps manage and execute workflows by defining a series of tasks and their dependencies. It is particularly useful for scientific research because:
+
+- **Simplicity:** Makefiles are straightforward to write and understand, making it easy to define workflows.
+- **Dependency Management:** Make ensures that tasks are executed in the correct order based on their dependencies, which is crucial for reproducible research.
+- **Efficiency:** Make only re-executes tasks that have changed, saving time and computational resources.
+- **Portability:** Makefiles can be shared and executed on different systems, ensuring consistency across environments.
+
+### Creating a Simple Workflow with Make**
+```makefile
+# Define targets and dependencies
+all: clean_data.csv
+
+clean_data.csv: raw_data.csv
+    python preprocess.py raw_data.csv clean_data.csv
+
+# Define a clean target to remove generated files
+clean:
+    rm -f clean_data.csv
+```
+
+Our workflow so far is:
+```bash
+# Download the data
+wget https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
+# Save the meta-data
+grep -e '^#' AT20G.tsv > AT20G_header.txt
+# Save just the table with a 1 line header
+grep -v -e '^#' -e '^-' -e '^deg' -e '^$' AT20G.tsv > AT20G_table.tsv
+# Clean and filter with python
+python clean_AT20G.py
+```
+
+We can break down the above process by tracking the files that arecreated as follows:
+1. <no file> -> AT20G.tsv
+2. AT20G.tsv -> AT20G_header.txt + AT20G_table.tsv
+3. AT20G_table.tsv -> AT20G_final.csv
+
+> ## Create a makefile for our workflow
+> Use the demonstrated syntax and our breakdown of the workflow to write a makefile.
+>
+> Note that the characters `#` and `$` mean something to make so we have to escape them using `\#` and `$$` respectively.
+>
+> > ## `makefile`
+> > ```makefile
+> > # List all the outputs that we want
+> > all: data/final/AT20G_final.csv data/final/AT20G_header.txt
+> > 
+> > data/raw/AT20G.tsv:
+> >         wget -O data/raw/AT20G.tsv https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
+> > 
+> > data/final/AT20G_header.txt: data/raw/AT20G.tsv
+> >         grep -e '^\#' data/raw/AT20G.tsv > data/final/AT20G_header.txt
+> > 
+> > data/processing/AT20G_table.tsv: data/raw/AT20G.tsv
+> >         grep -v -e '^\#' -e '^-' -e '^deg' -e '^$$' data/raw/AT20G.tsv > data/processing/AT20G_table.tsv
+> > 
+> > # Note that I put the script as a dependency so that this step is redone if the script is updated :D
+> > data/final/AT20G_final.csv: data/processing/AT20G_table.tsv src/clean_AT20G.py
+> >         python src/clean_AT20G.py
+> > 
+> > # Delete all the data files
+> > clean:
+> >         rm data/*/AT20G*
+> > ```
+> {: .solution}
+{: .challenge}
+
+You'll notice in the above that we often have a pattern of using the input/ouptut filenames as part of the dependencies.
+Make gives us some shortcuts to reduce the amount of repetition: 
+1. `$<` is the first prerequisite
+2. `$^` is the all the prerequesites
+3. `$@` is the target of the rule
+4. many more listed [here](https://www.gnu.org/software/make/manual/make.html#Automatic-Variables)
+
+This all sounds nice and fun, however these shortcuts quickly loose all meaning when you step away from the project, and make quickly becomes a [write-only language](https://wiki.c2.com/?WriteOnlyLanguage).
+Additionally, the inability to visualise the execution path of a given makefile, means that make is good only for small or simple projects.
+This shouldn't be seen as a criticism of `make` since we are essentially hijacking it for uses that it was not intended.
+`make` was designed to make compiling code easier, not for orchestrating complex scientific workflows!
+For larger or more complex projects we should therefore use something that was designed as a workflow manager.
+
+## Nextflow
+Nextflow was designed and built as a workflow orchestration tool, with a focus on portability and reproducibility.
+Some of the very nice features of Nextflow that come out of the box include:
+1. Caching of results, and the ability to resume a previous run
+2. Integration with any architecture that you use (eg. HPC, cloud, desktop)
+3. Management of a range of containerisation tools (eg. Docker, Singularity)
+4. Detailed, automatic, and easily understood reporting of every run
+5. Monitoring of resources on a per-task basis
+
+Nextflow is a fantastic tool, but not something we can fully learn in the remaining time for this workshop.
+However, we'll have a quick overview of how it works, and you can refer to [this ADACS workshop](https://carpentries-incubator.github.io/Pipeline_Training_with_Nextflow/) for a self-paced workshop.
+
+
+### Example Nextflow workflow
+```groovy
+process preprocess {
+    input:
+    path raw_data
+
+    output:
+    path "clean_data.csv"
+
+    script:
+    """
+    python preprocess.py $raw_data clean_data.csv
+    """
+}
+
+workflow {
+    raw_data = file("raw_data.csv")
+    clean_data = preprocess(raw_data)
+}
+```
+
+## Session 2 topics
+
+### Logging
 Logging is a crucial aspect of any workflow for several reasons:
 
 1. Debugging: Logs provide detailed information about the application's execution, which helps developers identify and fix bugs more efficiently.
@@ -855,126 +1010,8 @@ output, return_code = run_command(command)
 ```
 This example demonstrates how to use `os.popen` to run a command, capture its output, and log the results.
 
-Also show example from MGlowacki project.
 
 Reiterate the importance of workflows failing gracefully - in a way where you know where they failed and why.
-
-#### Example: Workflow Design with Make
-```makefile
-# Makefile example for a simple workflow
-
-# Define the final target
-all: results/clean_data.csv
-
-# Rule to preprocess raw data
-results/clean_data.csv: data/raw_data.csv
-  python scripts/preprocess.py data/raw_data.csv results/clean_data.csv
-
-# Clean up generated files
-clean:
-  rm -f results/clean_data.csv
-```
-
-By following these principles, you can create robust and efficient workflows that are easier to maintain and scale.
-
-Make is good for simple workflows, but doesn't have any way of telling you when things break, and can also be a write-only language.
-Something like a python script that checks the before/after state between each workflow step can be easier to manage (though doesn't "save state").
-
-A nextflow workflow gives a nice balance between the simplicity of Make and the adaptability of Python.
-
-## Reproducible Environments
-
-
-
-
-
-
-## Workflow Tools in Action
-### Introduction to Make and Nextflow
-
-### Make
-Make is a build automation tool that helps manage and execute workflows by defining a series of tasks and their dependencies. It is particularly useful for scientific research because:
-
-- **Simplicity:** Makefiles are straightforward to write and understand, making it easy to define workflows.
-- **Dependency Management:** Make ensures that tasks are executed in the correct order based on their dependencies, which is crucial for reproducible research.
-- **Efficiency:** Make only re-executes tasks that have changed, saving time and computational resources.
-- **Portability:** Makefiles can be shared and executed on different systems, ensuring consistency across environments.
-
-### Creating a Simple Workflow with Make**
-```makefile
-# Define targets and dependencies
-all: clean_data.csv
-
-clean_data.csv: raw_data.csv
-    python preprocess.py raw_data.csv clean_data.csv
-
-# Define a clean target to remove generated files
-clean:
-    rm -f clean_data.csv
-```
-
-### Nextflow
-Nextflow is a workflow management system designed for scalable and reproducible scientific workflows. It offers several advantages for researchers:
-
-- **Scalability:** Nextflow can handle complex workflows with many tasks and dependencies, and it supports parallel execution to speed up processing.
-- **Reproducibility:** Nextflow workflows are defined in a domain-specific language that captures the entire workflow, making it easy to reproduce results.
-- **Portability:** Nextflow can run on various computing environments, including local machines, clusters, and cloud platforms, ensuring that workflows are portable and adaptable.
-- **Error Handling:** Nextflow provides robust error handling and checkpointing, allowing workflows to resume from intermediate states in case of failures.
-- **Community Support:** Nextflow has a large and active user community, providing a wealth of resources, tutorials, and support for researchers.
-
-By using tools like Make and Nextflow, scientists can create efficient, reproducible, and scalable workflows, ultimately enhancing the reliability and impact of their research.
-
-
-### EXample: Using Nextflow for Workflow Management**
-```groovy
-# Define a simple Nextflow workflow
-process preprocess {
-    input:
-    path raw_data
-
-    output:
-    path "clean_data.csv"
-
-    script:
-    """
-    python preprocess.py $raw_data clean_data.csv
-    """
-}
-
-workflow {
-    raw_data = file("raw_data.csv")
-    preprocess(raw_data)
-}
-```
-
-
-### Pros and Cons of Using Make vs Nextflow for Workflow Management
-
-#### Make
-**Pros:**
-- **Simplicity:** Easy to write and understand Makefiles for simple workflows.
-- **Dependency Management:** Automatically handles task dependencies, ensuring correct execution order.
-- **Efficiency:** Only re-executes tasks that have changed, saving time and resources.
-- **Portability:** Makefiles can be shared and executed on different systems.
-
-**Cons:**
-- **Limited Scalability:** Not well-suited for complex workflows with many tasks and dependencies.
-- **Error Handling:** Lacks robust error handling and checkpointing features.
-- **Parallel Execution:** Limited support for parallel task execution.
-- **Verbose Syntax:** Can become cumbersome and difficult to manage for larger workflows.
-
-#### Nextflow
-**Pros:**
-- **Scalability:** Handles complex workflows with many tasks and dependencies, supporting parallel execution.
-- **Reproducibility:** Captures the entire workflow in a domain-specific language, ensuring reproducibility.
-- **Portability:** Runs on various computing environments, including local machines, clusters, and cloud platforms.
-- **Error Handling:** Provides robust error handling and checkpointing, allowing workflows to resume from intermediate states.
-- **Community Support:** Large and active user community with extensive resources and support.
-
-**Cons:**
-- **Learning Curve:** Steeper learning curve compared to Make, especially for users unfamiliar with the domain-specific language.
-- **Overhead:** May introduce additional overhead for simple workflows that do not require advanced features.
-- **Complexity:** Can be more complex to set up and manage compared to Make for straightforward tasks.
 
 
 ## Discussion & Problem Solving
