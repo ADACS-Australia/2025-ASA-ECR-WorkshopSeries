@@ -78,9 +78,9 @@ Today the world is a little nicer, as many people have realised the benefits of 
 
 The task that we will focus on today is the following:
 
-1. Obtain data for 3 different radio surveys
-2. Clean the data
-3. Convert the data into a common format
+1. Obtain a catalogue of data data for a given radio survey
+2. Clean and filter the data
+3. Convert the data into a standard format
 
 We will firstly look at how we would do all of this manually (because thats how you do everything the first time), and then learn some tools that will help us to automate the process.
 
@@ -329,7 +329,7 @@ For this next section to work you'll need to have `python3` installed with both 
 
 To check if you have `pandas` installed you can run the following:
 ```
-python3 -c 'impot pandas'
+python3 -c 'import pandas'
 ```
 {: .language-bash}
 
@@ -603,13 +603,184 @@ The `workflow.txt` file that you have now gives you a way to reproduce all the s
 Even easier than this we could rename the file to be `workflow.sh` and it would be a valid bash script that we could run with `bash workflow.sh`!
 Pretty easy right?
 
-> Create executable workflow file (optional)
+> ## Create executable workflow file (optional)
 > If you add a `!# /usr/bin/env bash` to the **first** line of your workflow file, then linux will interpret all of the following lines as bash code and execute them as such.
 > Additionally, if you change the file permissions to be 'executable' using `chmod ugo+x` then you'll be able to run your script from the command line by calling it by name (`./workflow.sh`).
 >
 {: .solution}
 
-## 
+We have now captured all the work of our human workflow into something that a computer can follow.
+Now if we want to redo any or all of this work we can just run the script.
+If a collaborator or supervisor asks "what if ...", you can test that out by modifying the workflow and re-running, if you don't like the result, you can just change back and re-run, all without having to spend a alot of time.
+If we want someone else to be able to replicate our work we can send them the workflow file, and they should be able to run the same process on the same data.
+Well, this would be nice, but there is one little wrinkle that we have to deal with - the other person may not have the same software on their computer.
+This is a very common problem, but there are many tools available to help us get around it.
+We will explore one of these tools in the next section.
+
+## Managing your workflows environment
+
+You want to make sure that each time you run the workflow you get the same results.
+This includes when you upgrade your computer, or when you run on a different computer.
+To do this, we need to not only control the workflow instructions but also the software that is being used.
+For tools like `wget` and `grep`, there are not so many versions that we need to bother with, people either have the tool or they don't.
+However, for tools like `python`, there are many version of python itself (3.8-3.13 are commonly used), and then you have all the separate libraries which have their own versions.
+In our workflow that we developed above we used two python libraries: `pandas` and `numpy`.
+We'll now look at ways that we can indicate to people which libraries are required to run our workflow, and how to make sure they are automatically installed.
+
+### Virtual environments
+On your computer you will typically have many different projects that you are working on, and many different software packages installed.
+One solution is that you can try and maintain a universal set of software that will support each of your projects, however this can become difficult or impossible to achieve as different programs will have different requirements.
+Not only do you have your own projects that you have to worry about but many operating systems keep a version of `python` and associated libraries that are integral for the smooth running of the OS.
+If you updated or break this system version of python you are in a world of pain.
+
+A virtual environment is essential for managing dependencies and ensuring reproducibility in your workflows. It allows you to create an isolated Python environment for your project, separate from the global Python installation. This isolation ensures that:
+
+1. **Dependency Management:** You can install specific versions of libraries required for your project without affecting other projects or the system-wide Python installation.
+
+2. **Reproducibility:** By isolating dependencies, you can ensure that your workflow runs consistently across different systems, even if the global environment changes.
+
+3. **Conflict Avoidance:** Virtual environments prevent version conflicts between libraries used in different projects. For example, one project might require `pandas==1.3.0`, while another needs `pandas==1.5.0`.
+
+4. **Ease of Collaboration:** By sharing a `requirements.txt` file, collaborators can recreate the exact environment needed to run your workflow, avoiding "it works on my machine" issues.
+
+5. **Safe Experimentation:** You can safely test new libraries or versions without risking the stability of your global Python environment.
+
+Using tools like `venv` or `conda`, you can easily create and manage virtual environments tailored to your project's needs. This practice is a cornerstone of reproducible and maintainable research workflows.
+
+
+### Making a python virtual environment
+
+There are a few different tools that you can use to make a python virtual environment, and they all essentially do the same thing, just with different amounts of user-friendly-ness.
+The option that takes the least amount of installation is the python library `venv`.
+The main steps for making the environment are:
+
+
+1. **Create a new environment**:
+  ```bash
+  python3 -m venv env
+  ```
+
+2. **Activate the environment**:
+  - On macOS and Linux:
+    ```bash
+    source env/bin/activate
+    ```
+  - On Windows:
+    ```bash
+    env\Scripts\activate
+    ```
+
+3. **Install required packages**:
+  ```bash
+  pip install numpy pandas
+  ```
+
+4. **Deactivate the environment**:
+  ```bash
+  deactivate
+  ```
+
+When you create a new environment you'll see a new directory with the same name.
+This directory contains all the information needed to run and maintain that environment.
+Common names are just `env` (or `.env`), but you can use anything you like.
+
+When you activate a new environment you'll typically see that your command prompt changes to include `(env)` at the start, so you know which environment is active.
+Any libraries that you install when the environment is active will only be installed into that environment.
+
+> ## create a new virtual environment for your project
+> Create a new enviroment called `.env` in your project directory, activate the project, and install both pandas and numpy.
+>
+{: .challenge}
+
+To make the environment reproducible on other computers we don't need to copy the entire `.env` directory structure, instead we just need a list of which libraries were installed and their versions.
+Once we have this we can make a file `requirements.txt` which lists (one per line) the libraries and versions.
+
+> ## Create a `requirements.txt` file for your project
+> We installed `pandas` and `numpy` for our scripts to run, so list these in a new file called `requirements.txt`.
+>
+> To determine the versions of these libraries we can either remember what we were told when they were installed (too hard), or we can ask `pip` to tell us using `pip freeze`.
+> 
+> Find the versions of `pandas` and `numpy` that were installed and then add this to the `requirements.txt` file.
+>
+> > ## my `requirements.txt` file
+> > ```output
+> > numpy==2.2.4
+> > pandas==2.2.3
+> > ```
+> {: .solution}
+>
+{: .challenge}
+
+> ## Note
+> When you ran `pip freeze` above, you probably saw a LONG list of libraries that were installed.
+> This is because `pandas` and `numpy` each have other libraries that they rely on, and those have dependencies as well.
+> We don't need to exactly match every library version, just the top level libraries that we used.
+>
+{: .callout}
+
+In our directory we now have a few files and directories:
+```bash
+.
+..
+.env/
+AT20G.tsv
+AT20G_header.txt
+AT20G_table.tsv
+AT20G_final.csv
+clean_AT20G.py
+requirements.txt
+workflow.sh
+```
+To make it easier to remember how all the files interact and what the purpose of this proejct is we should introduce some project structure.
+
+### Project structure
+Structuring your files and directories properly is crucial for maintaining a clean, organized, and manageable Python project. A well-structured project makes it easier to navigate, understand, and collaborate with others. Here are some key points to consider:
+
+1. **Root Directory**: The root directory should contain essential files like `README.md`, `setup.py`, and a license file. These files provide important information about the project, installation instructions, and licensing details.
+
+2. **Source Code Directory**: Create a dedicated directory (e.g., `src` or the project name) for your source code. This directory should contain all the Python modules and packages related to your project.
+
+3. **Tests Directory**: Include a separate directory (e.g., `tests`) for your test cases. Organizing tests in a dedicated directory helps ensure that they are easily accessible and maintainable.
+
+4. **Configuration Files**: Store configuration files (e.g., `config.yaml`, `.env`) in a dedicated directory (e.g., `config`). This keeps configuration settings separate from the source code and makes it easier to manage different environments.
+
+5. **Data Directory**: If your project involves data processing, create a directory (e.g., `data`) to store raw and processed data files. This helps keep data organized and prevents cluttering the source code directory.
+
+6. **Documentation Directory**: Maintain a directory (e.g., `docs`) for project documentation. This can include user guides, API references, and other relevant documentation.
+
+7. **Virtual Environment**: Use a virtual environment to manage dependencies. Create a directory (e.g., `.env`) for the virtual environment to ensure that dependencies are isolated and do not interfere with other projects.
+
+Example project structure:
+```
+my_project/
+├── .env/
+├── config/
+│   └── config.yaml
+├── data/
+│   ├── raw/
+│   └── processed/
+├── docs/
+│   └── index.md
+├── src/
+│   └── main.py
+├── tests/
+│   └── test_main.py
+├── README.md
+├── requirements.txt
+└── setup.py
+```
+
+Now when we return to our project after some time away (or share it with a collaborator) we can get an idea of what is going on by first looking at the README.md file, and then poking around the various directories.
+Not all of the directores and files listed above are essntial for every project, however it is a good idea to consider all 7 items above and choose what you think is relevant and helpful.
+
+> ## Update our project structure
+> 1. Create a `data` directory with sub-directories of raw/intermediate/final
+> 2. Create a `src` directory for storing code
+> 3. Create a `README.md` file with a short description of the project.
+> 4. Move all the data files into the relevant directories.
+> 5. Update your `workflow.sh` file so that it will work with the new directory structure.
+>
+{: .challenge}
 
 ### Workflow design principles
 Understand the basics of designing a robust workflow, including task dependencies, parallel processing, and error handling.
@@ -648,35 +819,6 @@ def log_example():
 log_example()
 ```
 This example demonstrates how to configure and use Python's built-in `logging` module to log messages to a file.
-
-#### Example: Checkpointing with Python
-```python
-import os
-import pickle
-
-# Function to save a checkpoint
-def save_checkpoint(data, filename='checkpoint.pkl'):
-  with open(filename, 'wb') as f:
-    pickle.dump(data, f)
-
-# Function to load a checkpoint
-def load_checkpoint(filename='checkpoint.pkl'):
-  if os.path.exists(filename):
-    with open(filename, 'rb') as f:
-      return pickle.load(f)
-  return None
-
-# Example usage
-data = {'step': 1, 'result': 'intermediate data'}
-save_checkpoint(data)
-
-# Later in the workflow
-checkpoint_data = load_checkpoint()
-if checkpoint_data:
-  print(f"Resuming from step {checkpoint_data['step']} with data: {checkpoint_data['result']}")
-```
-This example shows how to use Python's `pickle` module to save and load checkpoints, allowing workflows to resume from intermediate states.
-
 
 #### Error handling
 Incorporate error handling mechanisms to manage and recover from failures. This can include retrying failed tasks, logging errors for later analysis, and implementing checkpointing to save intermediate results. Effective error handling ensures that the workflow can continue or be easily restarted in case of issues.
@@ -742,142 +884,9 @@ A nextflow workflow gives a nice balance between the simplicity of Make and the 
 
 ## Reproducible Environments
 
-### Project structure
-Structuring your files and directories properly is crucial for maintaining a clean, organized, and manageable Python project. A well-structured project makes it easier to navigate, understand, and collaborate with others. Here are some key points to consider:
-
-1. **Root Directory**: The root directory should contain essential files like `README.md`, `setup.py`, and a license file. These files provide important information about the project, installation instructions, and licensing details.
-
-2. **Source Code Directory**: Create a dedicated directory (e.g., `src` or the project name) for your source code. This directory should contain all the Python modules and packages related to your project.
-
-3. **Tests Directory**: Include a separate directory (e.g., `tests`) for your test cases. Organizing tests in a dedicated directory helps ensure that they are easily accessible and maintainable.
-
-4. **Configuration Files**: Store configuration files (e.g., `config.yaml`, `.env`) in a dedicated directory (e.g., `config`). This keeps configuration settings separate from the source code and makes it easier to manage different environments.
-
-5. **Data Directory**: If your project involves data processing, create a directory (e.g., `data`) to store raw and processed data files. This helps keep data organized and prevents cluttering the source code directory.
-
-6. **Documentation Directory**: Maintain a directory (e.g., `docs`) for project documentation. This can include user guides, API references, and other relevant documentation.
-
-7. **Virtual Environment**: Use a virtual environment to manage dependencies. Create a directory (e.g., `venv`) for the virtual environment to ensure that dependencies are isolated and do not interfere with other projects.
-
-Example project structure:
-```
-my_project/
-├── config/
-│   └── config.yaml
-├── data/
-│   ├── raw/
-│   └── processed/
-├── docs/
-│   └── index.md
-├── src/
-│   ├── __init__.py
-│   └── main.py
-├── tests/
-│   ├── __init__.py
-│   └── test_main.py
-├── venv/
-├── .gitignore
-├── README.md
-├── requirements.txt
-└── setup.py
-```
-
-By following these guidelines, you can create a well-organized project structure that enhances readability, maintainability, and collaboration.
 
 
-### Python environments
-Python environments are useful because they allow you to create isolated spaces for your projects, ensuring that dependencies and packages do not conflict with each other. This is particularly important when working on multiple projects that require different versions of the same package or library. By using environments, you can maintain consistency and reproducibility in your workflows.
 
-#### Setting up a Conda environment
-Conda is a popular package and environment management system that allows you to create and manage isolated environments.
-
-1. **Install Conda**: If you don't have Conda installed, you can download and install it from the [Anaconda](https://www.anaconda.com/products/distribution) website or use [Miniconda](https://docs.conda.io/en/latest/miniconda.html) for a minimal installation.
-
-2. **Create a new environment**:
-  ```bash
-  conda create --name myenv python=3.10
-  ```
-
-3. **Activate the environment**:
-  ```bash
-  conda activate myenv
-  ```
-
-4. **Install packages**:
-  ```bash
-  conda install numpy pandas
-  ```
-
-5. **Deactivate the environment**:
-  ```bash
-  conda deactivate
-  ```
-
-#### Setting up a virtual environment with `venv`
-The `venv` module is included in Python's standard library and allows you to create lightweight virtual environments.
-
-1. **Create a new environment**:
-  ```bash
-  python -m venv myenv
-  ```
-
-2. **Activate the environment**:
-  - On Windows:
-    ```bash
-    myenv\Scripts\activate
-    ```
-  - On macOS and Linux:
-    ```bash
-    source myenv/bin/activate
-    ```
-
-3. **Install packages**:
-  ```bash
-  pip install numpy pandas
-  ```
-
-4. **Deactivate the environment**:
-  ```bash
-  deactivate
-  ```
-
-By using Conda or `venv`, you can ensure that your projects have the necessary dependencies without interfering with each other, leading to more reliable and reproducible research workflows.
-
-### Containers
-
-Docker containers are useful for preserving a software environment because they encapsulate all the dependencies, libraries, and configurations needed to run an application. This ensures that the application runs consistently across different environments, from development to production. Containers are lightweight, portable, and can be easily shared, making them ideal for reproducible research and collaborative projects.
-
-#### Example: Dockerfile for a Python Program
-
-```dockerfile
-# Use the official Python image from the Docker Hub
-FROM python:3.10-slim
-
-# Set the working directory in the container
-WORKDIR /app
-
-# Copy the requirements file into the container
-COPY requirements.txt .
-
-# Install the required Python packages
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copy the rest of the application code into the container
-COPY . .
-
-# Specify the command to run the application
-CMD ["python", "main.py"]
-```
-
-In this example:
-- `FROM python:3.10-slim` specifies the base image with Python 3.10.
-- `WORKDIR /app` sets the working directory inside the container.
-- `COPY requirements.txt .` copies the `requirements.txt` file into the container.
-- `RUN pip install --no-cache-dir -r requirements.txt` installs the required Python packages.
-- `COPY . .` copies the rest of the application code into the container.
-- `CMD ["python", "main.py"]` specifies the command to run the Python program.
-
-By using Docker, you can ensure that your Python program runs in a consistent environment, regardless of where it is deployed.
 
 
 ## Workflow Tools in Action
