@@ -19,38 +19,13 @@ keypoints:
 
 
 # Workflow for computer
-as above but using scripts! Bash/Make/Python/Nextflow
-
-
-Download file:
-- wget from github or Vizier
-
-
-
-Can do more save data and some printing to give the metadata etc, which we pipe into a file.
-
-Two main things:
-- Bash for initial filtering of the file
-- Python for the filtering and transforming
+as above but using scripts! Bash/Make/Python
 
 Project structure:
 - folders for data (raw/intermediate/processed)
 - folders for scrripts (workflow, and individual)
 
-
 Demonstrate how to do this with Make, and then with Nextflow.
-
-# Workshop outline:
-
-| Time (AEST)  | Focus                     | Details                                                                 |
-|--------------|-----------------------------|-------------------------------------------------------------------------|
-| 2:00 - 2:10 PM | Overview                    | Why automate? Benefits of workflow management.                           |
-| 2:10 - 2:30 PM | Data Acquisition & Workflow Design | Downloading data from remote sources, workflow design.                   |
-| 2:30 - 2:50 PM | Reproducible Environments   | Using venv, conda, containers; logging and checkpointing.                |
-| 2:50 - 2:55 PM | Break                      |                                                                         |
-| 2:55 - 3:15 PM | Workflow Tools in Action    | Introduction to Make, Nextflow; hands-on scripting.                      |
-| 3:15 - 3:30 PM | Discussion & Problem Solving| Recap and address challenges in automation.                              |
-
 
 ## Overview
 ## Why automate?
@@ -112,8 +87,8 @@ We will firstly look at how we would do all of this manually (because thats how 
 ## A workflow for humans
 
 1. Download the AT20G dataset from [this repo](./data/Workshop1/AT20G.tsv) (a subset of the entire catalogue from [ViZieR](https://vizier.cds.unistra.fr/viz-bin/VizieR?-source=J/MNRAS/402/2403&-to=3))
-1. Separate the meta data from the table data (starts with #)
-1. Remove the second two lines of the table header (units and ----)
+1. Separate the meta data from the table data (starts with `#`)
+1. Remove the second two lines of the table header (units and `----`)
 1. Count the number of rows in the data, record for later use
 1. Correct the data types of the columns (currently most are strings, thanks to missing data)
 1. Remove all rows with no 5/8GHz measurements (columns S8 and S5)
@@ -278,7 +253,7 @@ In order to separate the metadata rows we'll use a program called `grep` which i
 > ```
 > grep -e '^#' > AT20G_header.txt
 > ```
-> {: .languge-bash}
+> {: .language-bash}
 >  
 > Do this now and check that the new file exists and has all the meta data in it.
 >
@@ -602,7 +577,8 @@ Now we have figured out all the steps needed to do our cleaning and filtering wi
 > > {: .language-python}
 > {: .solution}
 > You can check that your script works by deleting the output file and then running `python clean_AT20G.py`, it should remake the file.
-{: .challange}
+>
+{: .challenge}
 
 > ## Update your `workflow.txt`
 > Update `workflow.txt` to include the python based cleaning / filtering step.
@@ -626,6 +602,12 @@ Now we have figured out all the steps needed to do our cleaning and filtering wi
 The `workflow.txt` file that you have now gives you a way to reproduce all the steps of the workflow simply by copy pasting the commands into a bash terminal.
 Even easier than this we could rename the file to be `workflow.sh` and it would be a valid bash script that we could run with `bash workflow.sh`!
 Pretty easy right?
+
+> Create executable workflow file (optional)
+> If you add a `!# /usr/bin/env bash` to the **first** line of your workflow file, then linux will interpret all of the following lines as bash code and execute them as such.
+> Additionally, if you change the file permissions to be 'executable' using `chmod ugo+x` then you'll be able to run your script from the command line by calling it by name (`./workflow.sh`).
+>
+{: .solution}
 
 ## 
 
