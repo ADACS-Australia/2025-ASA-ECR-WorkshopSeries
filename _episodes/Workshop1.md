@@ -4,30 +4,20 @@ teaching: 45
 exercises: 45
 questions:
 - "How can automation improve my current workflow?"
-- "What tools and software will we be using?"
-- "How do I troubleshoot common issues in workflow automation?"
-- "What are the best practices for maintaining reproducible environments?"
+- "How can I automate my current work?"
+- "How can I ensure that my workflow is reproducible on different computers?"
+- "What workflow management tools are available?"
 objectives:
 - "Learn to streamline the routine tasks in your research - from downloading remote data to managing reproducible computational environments - so you can focus on discovery."
 keypoints:
 - "Automation can significantly streamline repetitive tasks and reduce errors."
-- "Effective workflow management ensures consistency and reproducibility."
-- "Tools like `wget`, `curl`, `venv`, `conda`, Docker, Make, and Nextflow are very helpful for automating and managing workflows."
 - "Creating isolated and reproducible environments is crucial for reliable research."
-- "Logging and checkpointing are important for tracking progress and recovering from failures."
+- "Effective workflow management ensures consistency and reproducibility."
+- "Tools like `wget`, `venv`, Make, and Nextflow are very helpful for automating and managing workflows."
 ---
 
 
-# Workflow for computer
-as above but using scripts! Bash/Make/Python
-
-Project structure:
-- folders for data (raw/intermediate/processed)
-- folders for scrripts (workflow, and individual)
-
-Demonstrate how to do this with Make, and then with Nextflow.
-
-## Overview
+# Overview
 ## Why automate?
 Automation helps streamline repetitive tasks, reduce errors, and save time, allowing you to focus on analysis and discovery.
 By incorporating automation techniques into your research workflows, you can improve the efficiency, consistency, and reproducibility of your work, ultimately leading to more reliable and impactful scientific discoveries.
@@ -68,7 +58,7 @@ Large Language Models (LLMs) like ChatGPT and (GitHub) CoPilot can assist in aut
 >
 {: .caution}
 
-# Today's focus:
+# Today's focus
 
 In this workshop we are going to start with a commonly disliked, overlooked, and time consuming aspect of research - data cleaning - and learn some techniques to automate the process.
 The scenario that are going to work on is one that I had to struggle with during my PhD - preparing catalogues of radio sources for analysis.
@@ -616,7 +606,7 @@ Well, this would be nice, but there is one little wrinkle that we have to deal w
 This is a very common problem, but there are many tools available to help us get around it.
 We will explore one of these tools in the next section.
 
-## Managing your workflows environment
+## Managing your workflow's environment
 
 You want to make sure that each time you run the workflow you get the same results.
 This includes when you upgrade your computer, or when you run on a different computer.
@@ -833,26 +823,6 @@ A `makefile` describes each task as:
 ```
 Note: The indentation is a single tab character.
 
-### Make
-Make is a build automation tool that helps manage and execute workflows by defining a series of tasks and their dependencies. It is particularly useful for scientific research because:
-
-- **Simplicity:** Makefiles are straightforward to write and understand, making it easy to define workflows.
-- **Dependency Management:** Make ensures that tasks are executed in the correct order based on their dependencies, which is crucial for reproducible research.
-- **Efficiency:** Make only re-executes tasks that have changed, saving time and computational resources.
-- **Portability:** Makefiles can be shared and executed on different systems, ensuring consistency across environments.
-
-### Creating a Simple Workflow with Make**
-```makefile
-# Define targets and dependencies
-all: clean_data.csv
-
-clean_data.csv: raw_data.csv
-    python preprocess.py raw_data.csv clean_data.csv
-
-# Define a clean target to remove generated files
-clean:
-    rm -f clean_data.csv
-```
 
 Our workflow so far is:
 ```bash
@@ -867,9 +837,10 @@ python clean_AT20G.py
 ```
 
 We can break down the above process by tracking the files that arecreated as follows:
-1. <no file> -> AT20G.tsv
-2. AT20G.tsv -> AT20G_header.txt + AT20G_table.tsv
-3. AT20G_table.tsv -> AT20G_final.csv
+1. `<no file>` -> AT20G.tsv
+2. AT20G.tsv -> AT20G_header.txt
+3. AT20G.tsv -> AT20G_table.tsv
+4. AT20G_table.tsv -> AT20G_final.csv
 
 > ## Create a makefile for our workflow
 > Use the demonstrated syntax and our breakdown of the workflow to write a makefile.
@@ -901,6 +872,8 @@ We can break down the above process by tracking the files that arecreated as fol
 > {: .solution}
 {: .challenge}
 
+Our `makefile` requires that we have loaded the right python environment, so we should note this in our `README.md` file so that users don't get hit with errors they don't understand.
+
 You'll notice in the above that we often have a pattern of using the input/ouptut filenames as part of the dependencies.
 Make gives us some shortcuts to reduce the amount of repetition: 
 1. `$<` is the first prerequisite
@@ -916,6 +889,7 @@ For larger or more complex projects we should therefore use something that was d
 
 ## Nextflow
 Nextflow was designed and built as a workflow orchestration tool, with a focus on portability and reproducibility.
+Nextflow focuses on channels of information, which can be either files or variables, making it easier to pass information between different processing steps.
 Some of the very nice features of Nextflow that come out of the box include:
 1. Caching of results, and the ability to resume a previous run
 2. Integration with any architecture that you use (eg. HPC, cloud, desktop)
@@ -975,7 +949,7 @@ log_example()
 ```
 This example demonstrates how to configure and use Python's built-in `logging` module to log messages to a file.
 
-#### Error handling
+### Error handling
 Incorporate error handling mechanisms to manage and recover from failures. This can include retrying failed tasks, logging errors for later analysis, and implementing checkpointing to save intermediate results. Effective error handling ensures that the workflow can continue or be easily restarted in case of issues.
 
 #### Example: Running a Program with `os.popen` in Python
@@ -1012,13 +986,3 @@ This example demonstrates how to use `os.popen` to run a command, capture its ou
 
 
 Reiterate the importance of workflows failing gracefully - in a way where you know where they failed and why.
-
-
-## Discussion & Problem Solving
-- **Recap of key points:**  
-  Summarize the main takeaways from the workshop.
-- **Address challenges in automation:**  
-  Discuss common challenges and potential solutions in automating astronomy workflows.
-- **Open floor for questions and problem-solving:**  
-  Provide an opportunity for participants to ask questions and seek advice on specific issues they are facing.
-
