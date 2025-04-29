@@ -924,6 +924,12 @@ workflow {
 
 ## Session 2 topics
 
+Your workflow will eventually fail.
+Actually, it will most likely fail before it ever succeeds, this is just how development works.
+A key time-saving practice is to be able to know where and why your workflow has failed so that you can get to fixing it.
+Therefore, tracking the progress of the workflow is essential, as is stopping the workflow as soon as something goes wrong.
+You should therefore spend some time implementing logging and error handling for your workflow / scripts.
+
 ### Logging
 Logging is a crucial aspect of any workflow for several reasons:
 
@@ -947,42 +953,74 @@ def log_example():
 # Example usage
 log_example()
 ```
-This example demonstrates how to configure and use Python's built-in `logging` module to log messages to a file.
+
 
 ### Error handling
-Incorporate error handling mechanisms to manage and recover from failures. This can include retrying failed tasks, logging errors for later analysis, and implementing checkpointing to save intermediate results. Effective error handling ensures that the workflow can continue or be easily restarted in case of issues.
+Use error handling to manage and recover from failures.
+This can include retrying failed tasks, logging errors for later analysis, and implementing checkpointing to save intermediate results.
+Effective error handling ensures that the workflow can continue or be easily restarted in case of issues.
 
-#### Example: Running a Program with `os.popen` in Python
+In python there are a few ways to exit and signal failure.
+You can [raise an exception](https://docs.python.org/3/tutorial/errors.html) that is never caught (eg ``raise Exception(Things are bad)``), and this will result in your program showing a traceback of where the exception was raised, and the program returning an exit code of not zero (failure).
+Another option that you have is to send a message to the user (using print, or logging), and then quit the program early using `os.exit(1)`.
+
+You can use python to wrap or call other programs from the command line using `subprocess.popen`.
+Below is an example of how you can do this, whilst still keeping all of the output of the program and it's return code so that you can use it to do smart things within your python script.
+
+#### Example: Running a Program with `subprocess.Popen` in Python
 ```python
-import os
+import subprocess
 import logging
+import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def run_command(command):
-  process = os.popen(command)
-  output = process.read()
-  return_code = process.close()
-
-  if return_code is None:
-    return_code = 0
+def run_command(command, exit_on_fail=False):
+  process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+  stdout, stderr = process.communicate()
+  return_code = process.returncode
 
   if return_code == 0:
     logger.info(f"Command succeeded: {command}")
-    logger.info(f"Output: {output}")
+    logger.info(f"Output: {stdout}")
   else:
     logger.error(f"Command failed with return code {return_code}: {command}")
-    logger.error(f"Output: {output}")
+    logger.error(f"Error Output: {stderr}")
+    if exit_on_fail:
+      # Exit if the process fails
+      os.exit(return_code)
 
-  return output, return_code
+  return stdout, return_code
 
 # Example usage
 command = "ls -l"
 output, return_code = run_command(command)
 ```
-This example demonstrates how to use `os.popen` to run a command, capture its output, and log the results.
 
+#### Example: logging with and error handling in bash
 
-Reiterate the importance of workflows failing gracefully - in a way where you know where they failed and why.
+Logging in bash can be done using `echo` to print to stdout.
+You can redirect output to stderr using `>&2` (no spaces).
+You can quit your script early with a given return code using `exit`.
+
+```bash
+# Log to stdout
+echo "Starting analysis"
+# < run a task that produces file.txt>
+
+# Check the file was produced
+if [ ! -e "file.txt" ]; then
+  # Log to stderr
+  echo "Error! <task> didn't write file.txt" >&2
+  # exit with return code not-zero
+  exit 1
+fi
+```
+Bash also provides a few modes that you can enable that will help with logging and debugging.
+1. `set -x` will print each command to stdout before it is executed. Useful for tracking exactly what was executed without having to have lots of `echo` commands.
+2. `set -u` will treat the use of unset variables as an error. The default is that unset variables are assumed to be empty, which makes it hard to catch typos.
+3. `set -e` will cause your script to exit immediately if any commands exit with non-zero status.
+
+By having `set -eux` at the top of your bash script (eg `workflow.sh`) you'll automatically have some basic logging and error handling in your script.
