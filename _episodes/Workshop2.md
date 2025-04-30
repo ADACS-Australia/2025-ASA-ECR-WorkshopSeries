@@ -248,6 +248,122 @@ We'll start by refactoring our code to reflect this idiom.
 > {: .solution}
 {: .challenge}
 
+Some of the work that was done in our script is specific to the AT20G catalogue (selection of columns) but other work is more generic (loading / saving data).
+We have some options here:
+1. Write separate functions for the different catalogues that we will use
+2. Write a single, but very flexible, function that can handle any catalogue
+
+The second option sounds good, but it will certainly be more work, and it may be over-engineering a solution.
+Let us take the path of small resistance, and start with option 1, and then move toward option 2 in the future if we need to.
+This minimises the initial outlay of work, without incurring a large technical debt.
+
+> ## First small step
+> Change the above code so that we have the following functions:
+> 1. `load(filename, delimiter)` returns a pandas data frame
+> 2. `save(table, filename)` returns nothing
+> 3. `clean_AT20G(table)` returns a cleaned version of a data frame
+> 
+> Save this new file as `clean_tables.py`
+>
+> > ## `clean_tables.py`
+> > ```python
+> > import pandas as pd
+> > import numpy as np
+> > 
+> > def load(filename, delimiter):
+> >     return pd.read_csv(filename, delimiter=delimiter)
+> > 
+> > def save(table, filename):
+> >     table.to_csv(filename, index=False)
+> > 
+> > def clean_AT20G(table):
+> >     # replace all the spaces with nulls and change the column types
+> >     table = table.replace(r'^\s*$', np.nan, regex=True)
+> >     for colname in ['S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']:
+> >         table[colname] = table[colname].astype(float)
+> > 
+> >     # filter out all the rows with null S8/S5 and keep only those in a given RA range
+> >     mask = ~(table['S5'].isnull() | table['S8'].isnull())
+> >     mask = mask & ((table['_RAJ2000'] > 12 * 15) & (table['_RAJ2000'] < 18 * 15))
+> >     table = table[mask]
+> > 
+> >     # drop the columns that we don't need
+> >     table = table[['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']]
+> >     return table
+> > if __name__ == '__main__':
+> >     table = load('AT20G_table.tsv')
+> >     table = clean_AT20G(table)
+> >     save(table, 'AT20G_final.csv')
+> > ```
+> {: .solution}
+{: .challenge}
+
+Now we are in a position to be able to use config argparse to modify the `if __name__` block of our code.
+
+> ## Updated Script with `configargparse`
+> Modify the `clean_tables.py` script to use `configargparse` for accepting input and output filenames as arguments.
+> Keep the existing behaviour of our code by making the current hard-coded values the default.
+>
+> > ## `clean_tables.py`
+> > ```python
+> > import pandas as pd
+> > import numpy as np
+> > import configargparse
+> > 
+> > def load(filename, delimiter):
+> >     return pd.read_csv(filename, delimiter=delimiter)
+> > 
+> > def save(table, filename):
+> >     table.to_csv(filename, index=False)
+> > 
+> > def clean_AT20G(table):
+> >     # replace all the spaces with nulls and change the column types
+> >     table = table.replace(r'^\s*$', np.nan, regex=True)
+> >     for colname in ['S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']:
+> >         table[colname] = table[colname].astype(float)
+> > 
+> >     # filter out all the rows with null S8/S5 and keep only those in a given RA range
+> >     mask = ~(table['S5'].isnull() | table['S8'].isnull())
+> >     mask = mask & ((table['_RAJ2000'] > 12 * 15) & (table['_RAJ2000'] < 18 * 15))
+> >     table = table[mask]
+> > 
+> >     # drop the columns that we don't need
+> >     table = table[['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']]
+> >     return table
+> > 
+> > if __name__ == '__main__':
+> >     parser = configargparse.ArgParser(default_config_files=["config.yaml"])
+> >     parser.add("--config", is_config_file=True, help="Path to configuration file")
+> >     parser.add("-i", "--input_file", type=str, default="AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
+> >     parser.add("-o", "--output_file", type=str, default="AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
+> >     parser.add("-d", "--delimiter", type=str, default="\t", help="Delimiter used in the input file (default: tab)")
+> > 
+> >     args = parser.parse_args()
+> > 
+> >     table = load(args.input_file, args.delimiter)
+> >     table = clean_AT20G(table)
+> >     save(table, args.output_file)
+> > ```
+> > Note that we provide both long and short versions of the commonly used options (`-i` being the shorthand for `--input_file`).
+> >
+> {: .solution}
+{: .challenge}
+
+
+
+Now we have a script that we can modify from the command line to read/write different filenames, and to accept different  file types (.csv and .tsv) using the `--delimiter` option.
+Our next step is to change our script so that it can work on other catalogues.
+Before we can do that we need to understand how the other catalogue formats are different, and that means doing some more work by hand.
+
+> ## Download and inspect the NVSS data set
+> The data set is [here](https://github.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/raw/refs/heads/gh-pages/data/Workshop2/NVSS.tsv).
+>
+> Download using `wget` and then inspect using `less`.
+>
+> How would we change our workflow for pre-processing the AT20G catalogue for this new catalogue?
+>
+{: .challenge}
+
 ## Documentation & Reproducibility
 
 Best practices, configuration files.
