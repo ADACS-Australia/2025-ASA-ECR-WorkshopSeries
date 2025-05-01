@@ -3,20 +3,20 @@ layout: workshop      # DON'T CHANGE THIS.
 # More detailed instructions (including how to fill these variables for an
 # online workshop) are available at
 # https://carpentries.github.io/workshop-template/customization/index.html
-venue: "online"        # brief name of the institution that hosts the workshop without address (e.g., "Euphoric State University")
-address: "Curtin University"      # full street address of workshop (e.g., "Room A, 123 Forth Street, Blimingen, Euphoria"), videoconferencing URL, or 'online'
+venue: "Curtin University"        # brief name of the institution that hosts the workshop without address (e.g., "Euphoric State University")
+address: "online"      # full street address of workshop (e.g., "Room A, 123 Forth Street, Blimingen, Euphoria"), videoconferencing URL, or 'online'
 country: "au"      # lowercase two-letter ISO country code such as "fr" (see https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) for the institution that hosts the workshop
 language: "en"     # lowercase two-letter ISO language code such as "fr" (see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) for the workshop
 latitude: "-32.006195"        # decimal latitude of workshop venue (use https://www.latlong.net/)
 longitude: "115.894417"       # decimal longitude of the workshop venue (use https://www.latlong.net)
-humandate: "May 9th 2025"    # human-readable dates for the workshop (e.g., "Feb 17-18, 2020")
-humantime: "2:00pm AEST"    # human-readable times for the workshop e.g., "9:00 am - 4:30 pm AEST (7:00 am - 2:30 pm AWST)"
-startdate: 2025-05-09      # machine-readable start date for the workshop in YYYY-MM-DD format like 2015-01-01
-enddate: 2024-05-09        # machine-readable end date for the workshop in YYYY-MM-DD format like 2015-01-02
+humandate: "May 12 - June 12 2025"    # human-readable dates for the workshop (e.g., "Feb 17-18, 2020")
+humantime: "3:00pm AEST"    # human-readable times for the workshop e.g., "9:00 am - 4:30 pm AEST (7:00 am - 2:30 pm AWST)"
+startdate: 2025-05-12      # machine-readable start date for the workshop in YYYY-MM-DD format like 2015-01-01
+enddate: 2024-06-12        # machine-readable end date for the workshop in YYYY-MM-DD format like 2015-01-02
 instructor: ["Paul Hancock",] # boxed, comma-separated list of instructors' names as strings, like ["Kay McNulty", "Betty Jennings", "Betty Snyder"]
 helper: ["TBA",]     # boxed, comma-separated list of helpers' names, like ["Marlyn Wescoff", "Fran Bilas", "Ruth Lichterman"]
 email: ["paul.hancock@curtin.edu.au",]    # boxed, comma-separated list of contact email addresses for the host, lead instructor, or whoever else is handling questions, like ["marlyn.wescoff@example.org", "fran.bilas@example.org", "ruth.lichterman@example.org"]
-collaborative_notes:  "https://pad.carpentries.org/2025-ADACS-ECR-WorkshopSeries" # optional: URL for the workshop collaborative notes, e.g. an Etherpad or Google Docs document (e.g., https://pad.carpentries.org/2015-01-01-euphoria)
+collaborative_notes:  "https://docs.google.com/document/d/1606WNY5-5iWLN9Nqit9t4mqdXZ3AH5A9iAJIe_mKJes/edit?usp=sharing" # optional: URL for the workshop collaborative notes, e.g. an Etherpad or Google Docs document (e.g., https://pad.carpentries.org/2015-01-01-euphoria)
 eventbrite:           # optional: alphanumeric key for Eventbrite registration, e.g., "1234567890AB" (if Eventbrite is being used)
 # math: True
 ---
@@ -182,7 +182,6 @@ special instructions.
   We do not require participants to provide documentation of disabilities or disclose any unnecessary personal information. 
   However, we do want to help create an inclusive, accessible experience for all participants. 
   We encourage you to share any information that would be helpful to make your Carpentries experience accessible.
-  To request an accommodation for this workshop, please fill out the 
 </p>
 {% endif %}
 
@@ -319,6 +318,10 @@ please preview your site before committing, and make sure to run
   We maintain a list of common issues that occur during installation as a reference for instructors
   that may be useful on the
   <a href = "{{site.swc_github}}/workshop-template/wiki/Configuration-Problems-and-Solutions">Configuration Problems and Solutions wiki page</a>.
+</p>
+
+<p>
+Before the workshop, you should visit the <a href="{% link _episodes/Setup.md %}">Setup Page</a> to set your expectations of how this workshop will be run.
 </p>
 
 {% comment %}

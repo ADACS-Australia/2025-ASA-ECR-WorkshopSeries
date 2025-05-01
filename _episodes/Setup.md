@@ -9,7 +9,6 @@ objectives:
 keypoints:
 - "Ask questions, experiment, and help others"
 - "Everyone is here to learn and that means making mistakes"
-- "I'm not *that* kind of Dr, please excuse my non solar/stellar/space physics expertise"
 ---
 <!-- Update the below to include the lands on which the workshop is being presented if it is an in-person event. -->
 ## Acknowledgement of country
@@ -37,15 +36,12 @@ Software requirements for running on your own computer:
 - Python 3.8+ with the following modules ([requirements.txt]({{page.root}}{% link data/requirements.txt%}))
   - numpy
   - pandas
-  - <others>
 - make
   - [Windows](http://gnuwin32.sourceforge.net/packages/make.htm)
   - OSX `brew install make`
   - Linux `sudo apt install build-essential` (though likely already installed)
-- Nextflow ([installation instructions](https://www.nextflow.io/docs/latest/getstarted.html#installation))
-- An integrated development environment ([IDE](https://en.wikipedia.org/wiki/Integrated_development_environment)) or text editor of choice
-  - We recommend [Visual Studio Code](https://code.visualstudio.com/)
-  - Vim/Emac/Nano also works fine if that is your preference!
+- A text editor of your choice
+  - Vim/Emacs/Nano / whatever
 
 Assumed knowledge (links for info):
 
@@ -57,7 +53,7 @@ This workshop is all about learning by doing.
 We will be engaging in live coding type exercises for most of the workshop, and we will set challenges and exercises for you to complete in groups.
 The more you engage with your fellow learners and the more questions that you ask, the more that you will get out of this workshop.
 
-We will use a shared document ([etherpad]({{site.ether_pad}})) to manage and record many of our interactions.
+We will use a [shared document]({{site.ether_pad}}) to manage and record many of our interactions.
 
 
 ## Conduct
