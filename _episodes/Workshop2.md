@@ -362,7 +362,215 @@ Before we can do that we need to understand how the other catalogue formats are 
 >
 > How would we change our workflow for pre-processing the AT20G catalogue for this new catalogue?
 >
+> What parts of the workflow would we keep the same?
+>
+> ## Changes
+> > Some of the processing is going to be common between the two catalogues:
+> > - loading and saving
+> > - filtering on the "_RA2000" column
+> > 
+> > Some of the processing is common but needs to be done slightly differnetly:
+> > - The list of columns to keep
+> > 
+> > Some processing isn't needed for NVSS:
+> > - dropping the rows with blanks
+> > - converting column types
+> > 
+> {: .solution}
+>
 {: .challenge}
+
+We can now start to break down the `clean_AT20G.py` script into more atomic pieces so that we can reuse some (but not all) of them for the NVSS catalogue.
+This can be done without changing how the script is called from the command line, making the new script backwards compatible with our previous workflow.
+
+> ## Update `clean_tables.py`
+>
+> Break the `clean_AT20G` function into smaller parts:
+> - `drop_na(table, colnames)` - convert empty strings to `np.nan` and then remove rows with blanks
+> - `convert_cols(table, colnames)` - convert the given columns into float format
+> - `filter_rows(table, colname, min_value, max_value)` - remove rows where min_value < colname < max_value is not true.
+> - `keep_columns(table, colnames)` - reduce the table to contain only the given columns
+>
+> Once complete, your `clean_AT20G` function should remain, but it should only be calling other functions.
+>
+> > ## New version!
+> > ```python
+> > import pandas as pd
+> > import numpy as np
+> > import configargparse
+> > 
+> > def load(filename, delimiter):
+> >     return pd.read_csv(filename, delimiter=delimiter)
+> > 
+> > def save(table, filename):
+> >     table.to_csv(filename, index=False)
+> > 
+> > def drop_na(table, colnames):
+> >     """
+> >     Drop rows with NaN values in specified columns.
+> >     """
+> >     # replace all the spaces with nulls and change the column types
+> >     table = table.replace(r'^\s*$', np.nan, regex=True)
+> > 
+> >     for colname in colnames:
+> >         table = table[~table[colname].isnull()]
+> >     return table
+> > 
+> > def convert_cols(table, colnames):
+> >     """
+> >     Convert specified columns to float type.
+> >     """
+> >     for colname in colnames:
+> >         table[colname] = table[colname].astype(float)
+> >     return table
+> > 
+> > def filter_rows(table, colname, min_value, max_value):
+> >     """
+> >     Filter rows based on a range of values in a specified column.
+> >     """
+> >     mask = (table[colname] >= min_value) & (table[colname] <= max_value)
+> >     return table[mask]
+> > 
+> > def keep_columns(table, colnames):
+> >     """
+> >     Keep only specified columns from the DataFrame.
+> >     """
+> >     return table[colnames]
+> > 
+> > def clean_AT20G(infile, outfile):
+> >     # Use all our helper functions to clean the AT20G table
+> >     table = load(infile, '\t')
+> >     table = drop_na(table, colnames=['S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5'])
+> >     table = convert_cols(table, colnames=['S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5'])
+> >     table = filter_rows(table, colname='_RAJ2000', min_value=12 * 15, max_value=18 * 15)
+> >     table = keep_columns(table, colnames=['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5'])
+> >     save(table, outfile)
+> >     # return the table incase we want to do something else with it
+> >     return table
+> > 
+> > if __name__ == '__main__':
+> >     parser = configargparse.ArgParser(default_config_files=["config.yaml"])
+> >     parser.add("--config", is_config_file=True, help="Path to configuration file")
+> >     parser.add("-i", "--input_file", type=str, default="AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
+> >     parser.add("-o", "--output_file", type=str, default="AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
+> >     parser.add("-d", "--delimiter", type=str, default="\t", help="Delimiter used in the input file (default: tab)")
+> >     parser.add("-s", "--survey", type=str, default="AT20G", help="Survey to clean (default: AT20G)")
+> >     args = parser.parse_args()
+> > 
+> >     clean_AT20G(args.input_file, args.output_file)
+> > ```
+> > 
+> {: .solution}
+>
+{: .challenge}
+
+Now we can make a new function `clean_NVSS` to clean the NVSS dataset using the existing functions.
+
+> ## Update `clean_tables.py`
+> Use your newly created functions to create `clean_NVSS(infile, outfile)`
+>
+> > ## New code
+> >```python
+> > ...
+> > 
+> > def clean_NVSS(infile, outfile):
+> >     # Use all our helper functions to clean the NVSS table
+> >     table = load(infile, '\t')
+> >     table = filter_rows(table, colname='_RAJ2000', min_value=12 * 15, max_value=18 * 15)
+> >     table = keep_columns(table, colnames=['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'NVSS', 'RAJ2000', 'DEJ2000', 'S1.4', 'e_S1.4'])
+> >     save(table, outfile)
+> >     # return the table incase we want to do something else with it
+> >     return table
+> > 
+> > if __name__ == '__main__':
+> >     parser = configargparse.ArgParser(default_config_files=["config.yaml"])
+> >     parser.add("--config", is_config_file=True, help="Path to configuration file")
+> >     parser.add("-i", "--input_file", type=str, default="AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
+> >     parser.add("-o", "--output_file", type=str, default="AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
+> >     parser.add("-d", "--delimiter", type=str, default="\t", help="Delimiter used in the input file (default: tab)")
+> >     parser.add("-s", "--survey", type=str, default="AT20G", help="Survey to clean (default: AT20G)")
+> >     args = parser.parse_args()
+> > 
+> >     if args.survey.upper() == "AT20G":
+> >         clean_AT20G(args.input_file, args.output_file)
+> >     elif args.survey.upper() == "NVSS":
+> >         clean_NVSS(args.input_file, args.output_file)
+> >     else:
+> >         print(f"Unknown survey: {args.survey}. Please choose from AT20G or NVSS.")
+> > ```
+> {: .solution}
+{: .challenge}
+
+### Review
+So far we have done the following:
+- Manually download the NVSS data set
+- Inspected the new data set to determine what processing is going to be needed
+- Updated our python script to include the new filtering steps needed.
+
+However, we haven't been able to test that our script works since we haven't done the pre-processing stages for the NVSS catalogue - it still has an attached header.
+Let's now update our `makefile` to have a workflow for NVSS so that we can then test our new python file.
+We can also update the `makefile` to use the new python script for the AT20G catalogue.
+Unfortunately, we can't easily use the same tricks in make as we did in python - at least not without making it unreadable.
+Fortunately, given the similarity between the workflows we can do a copy/paste/edit job to make the NVSS version!
+
+> ## Create an NVSS workflow in our `makefile`
+> Use your knowledge from inspecting the NVSS file, and the existing AT20G workflow, to make a workflow for NVSS in our `makefile`.
+> - Allow users to choose wich workflow to run with new targets: `NVSS` and `AT20G`
+> - Update the `all` target to include both `NVSS` and `AT20G`
+> 
+> > ## Result
+> > ```makefile
+> > .PHONY: AT20G NVSS all clean
+> > 
+> > AT20G: data/final/AT20G_final.csv data/final/AT20G_header.txt
+> > 
+> > NVSS: data/final/NVSS_final.csv data/final/NVSS_header.txt
+> > 
+> > all: AT20G NVSS
+> > 
+> > # AT20G survey
+> > data/raw/AT20G.tsv:
+> > 	wget -O data/raw/AT20G.tsv https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
+> > 
+> > data/final/AT20G_header.txt: data/raw/AT20G.tsv
+> > 	grep -e '^\#' data/raw/AT20G.tsv > data/final/AT20G_header.txt
+> > 
+> > data/processing/AT20G_table.tsv: data/raw/AT20G.tsv
+> > 	grep -v -e '^\#' -e '^-' -e '^deg' -e '^$$' data/raw/AT20G.tsv > data/processing/AT20G_table.tsv
+> > 
+> > data/final/AT20G_final.csv: data/processing/AT20G_table.tsv src/clean_tables.py
+> > 	python src/clean_tables.py -s AT20G -i data/processing/AT20G_table.tsv -o data/final/AT20G_final.csv
+> > 
+> > 
+> > # NVSS survey
+> > data/raw/NVSS.tsv:
+> > 	wget -O data/raw/NVSS.tsv https://github.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/raw/refs/heads/gh-pages/data/Workshop2/NVSS.tsv
+> > 
+> > data/final/NVSS_header.txt: data/raw/NVSS.tsv
+> > 	grep -e '^\#' data/raw/NVSS.tsv > data/final/NVSS_header.txt
+> > 
+> > data/processing/NVSS_table.tsv: data/raw/NVSS.tsv
+> > 	grep -v -e '^\#' -e '^-' -e '^deg' -e '^$$' data/raw/NVSS.tsv > data/processing/NVSS_table.tsv
+> > 
+> > data/final/NVSS_final.csv: data/processing/NVSS_table.tsv src/clean_tables.py
+> > 	python src/clean_tables.py -s NVSS -i data/processing/NVSS_table.tsv -o data/final/NVSS_final.csv
+> > ```
+> > 
+> > In the above we have used `.PHONY` to tell `make` explicitly that the named targets are not files. 
+> > It's not required but helps avoid confusion if you actually have a file in your directory with this name.
+> > 
+> {: .solution}
+> 
+{: .challenge}
+
+Last week we created the workflow for AT20G from scratch and it took essentialy the whole lesson to do.
+This week, however, we are building our knowledge and success from last week to make a workflow for NVSS in much less time.
+If we now make a workflow that includes another survey (SUMSS), it should take even less time because:
+- We can just think about what is different between SUMSS and NVSS or AT20G rather than working from scratch
+- We have already set up our `clean_tables.py` script to be adaptable for different surveys
+- Our `makefile` already has different sections for different surveys
+
+
 
 ## Documentation & Reproducibility
 
