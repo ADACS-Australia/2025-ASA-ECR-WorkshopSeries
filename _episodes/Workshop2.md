@@ -62,8 +62,86 @@ In the last workshop we:
 - Turned our `workflow.sh` into a `makefile` so that we could easily run the workflow without repeating unneccessary steps.
 - Talkd about using Nextflow instead of make, but didn't actually do any Nextflow coding.
 
+> ## Last weeks code
+> If you didn't participate last week, no stress
+> We ended up with a directory structure as follows:
+```output
+my-project/
+├── .env/
+├── data
+│   ├── final/
+│   ├── processing/
+│   └── raw/
+├── makefile
+├── requirements.txt
+└── src
+    └── clean_AT20G.py
+```
+> > ## How to make these files
+> > You can copy the following code to make the required files:
+> > 
+> > `makefile`
+> > ```makefile
+> > # List all the outputs that we want
+> > all: data/final/AT20G_final.csv data/final/AT20G_header.txt
+> > 
+> > data/raw/AT20G.tsv:
+> >         wget -O data/raw/AT20G.tsv https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
+> > 
+> > data/final/AT20G_header.txt: data/raw/AT20G.tsv
+> >         grep -e '^\#' data/raw/AT20G.tsv > data/final/AT20G_header.txt
+> > 
+> > data/processing/AT20G_table.tsv: data/raw/AT20G.tsv
+> >         grep -v -e '^\#' -e '^-' -e '^deg' -e '^$$' data/raw/AT20G.tsv > data/processing/AT20G_table.tsv
+> > 
+> > # Note that I put the script as a dependency so that this step is redone if the script is updated :D
+> > data/final/AT20G_final.csv: data/processing/AT20G_table.tsv src/clean_AT20G.py
+> >         python src/clean_AT20G.py
+> > 
+> > # Delete all the data files
+> > clean:
+> >         rm data/*/AT20G*
+> > ```
+> > `clean_AT20G.py`
+> > ```python
+> > import pandas as pd
+> > import numpy as np
+> > 
+> > # Read the table
+> > df = pd.read_csv('data/processing/AT20G_table.tsv', delimiter='\t')
+> > 
+> > # replace all the spaces with nulls and change the column types
+> > df_fix = df.replace(r'^\s*$', np.nan, regex=True)
+> > for colname in ['S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']:
+> >   df_fix[colname] = df_fix[colname].astype(float)
+> > 
+> > # filter out all the rows with null S8/S5 and keep only those in a given RA range
+> > mask = ~(df_fix['S5'].isnull() | df_fix['S8'].isnull())
+> > mask = mask & ((df_fix['_RAJ2000'] > 12*15) & (df_fix['_RAJ2000']<18*15))
+> > df_fix = df_fix[mask]
+> > 
+> > # drop the columns that we don't need
+> > df_fix = df_fix[['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']]
+> > 
+> > # save to a file
+> > df_fix.to_csv('data/final/AT20G_final.csv', index=False)
+> > ```
+> > `requirements.txt`
+> > ```output
+> > numpy==2.2.4
+> > pandas==2.2.3
+> > ```
+> > 
+> > Making the `.env` file we can run:
+> > ```bash
+> > python -m venv .env
+> > source .env/bin/activate
+> > pip install -r requirements.txt
+> > ```
+> {: .solution}
+>
+{: .callout}
 
-TODO: Link / show final versions of our workflows that we might build upon them.
 
 # Today's focus
 
@@ -554,7 +632,11 @@ Fortunately, given the similarity between the workflows we can do a copy/paste/e
 > > 
 > > data/final/NVSS_final.csv: data/processing/NVSS_table.tsv src/clean_tables.py
 > > 	python src/clean_tables.py -s NVSS -i data/processing/NVSS_table.tsv -o data/final/NVSS_final.csv
-> > ```
+> >
+> > clean:
+> >     rm data/*/AT20G*
+> >     rm data/*/NVSS*
+> > > > ```
 > > 
 > > In the above we have used `.PHONY` to tell `make` explicitly that the named targets are not files. 
 > > It's not required but helps avoid confusion if you actually have a file in your directory with this name.
@@ -570,6 +652,77 @@ If we now make a workflow that includes another survey (SUMSS), it should take e
 - We have already set up our `clean_tables.py` script to be adaptable for different surveys
 - Our `makefile` already has different sections for different surveys
 
+We can of course test this hypothesis by completing all this workf ro the SUMSS survey.
+
+> ## Incorporate the SUMSS survey into our workflow
+> The data are here: [SUMSS.tsv](https://github.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/raw/refs/heads/gh-pages/data/Workshop2/SUMSS.tsv)
+>
+> - Download the data
+> - Decide what pre-processing needs to be done
+> - Update the `makefile` to include a target called SUMSS, and to include SUMSS data in the clean target
+> - Update `clean_tables.py` to accept SUMSS as a table option, and then perform the relevant cleaning operations
+>
+> > ## `the_workflow_final_v2_with_summs`
+> > Using `...` to refer to unchanged previous content.
+> > ```python
+> > 
+> > ...
+> > 
+> > def clean_SUMSS(infile, outfile):
+> >     # Use all our helper functions to clean the SUMSS table
+> >     table = load(infile, '\t')
+> >     table = filter_rows(table, colname='_RAJ2000', min_value=12 * 15, max_value=18 * 15)
+> >     table = keep_columns(table, colnames=['_Glon', '_Glat', '_DEJ2000', 'RAJ2000', 'DEJ2000', 'Sp', 'e_Sp'])
+> >     save(table, outfile)
+> >     # return the table incase we want to do something else with it
+> >     return table
+> > 
+> > if __name__ == '__main__':
+> >     
+> >     ...
+> > 
+> >     if args.survey.upper() == "AT20G":
+> >         clean_AT20G(args.input_file, args.output_file)
+> >     elif args.survey.upper() == "NVSS":
+> >         clean_NVSS(args.input_file, args.output_file)
+> >     elif args.survey.upper() == "SUMSS":
+> >         clean_SUMSS(args.input_file, args.output_file)
+> >     else:
+> >         print(f"Unknown survey: {args.survey}. Please choose from AT20G, NVSS, or SUMSS.")
+> > 
+> > ```
+> > ```makefile
+> > .PHONY: AT20G NVSS SUMSS all clean
+> > 
+> > SUMSS: data/final/SUMSS_final.csv data/final/SUMSS_header.txt
+> > 
+> > all: AT20G NVSS SUMSS
+> > 
+> > # ...
+> > 
+> > # SUMSS survey
+> > data/raw/SUMSS.tsv:
+> > 	wget -O data/raw/SUMSS.tsv https://github.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/raw/refs/heads/gh-pages/data/Workshop2/SUMSS.tsv
+> > 
+> > data/final/SUMSS_header.txt: data/raw/SUMSS.tsv
+> > 	grep -e '^\#' data/raw/SUMSS.tsv > data/final/SUMSS_header.txt
+> > 
+> > data/processing/SUMSS_table.tsv: data/raw/SUMSS.tsv
+> > 	grep -v -e '^\#' -e '^-' -e '^deg' -e '^$$' data/raw/SUMSS.tsv > data/processing/SUMSS_table.tsv
+> > 
+> > data/final/SUMSS_final.csv: data/processing/SUMSS_table.tsv src/clean_tables.py
+> > 	python src/clean_tables.py -s SUMSS -i data/processing/SUMSS_table.tsv -o data/final/SUMSS_final.csv
+> > 
+> > clean:
+> > 	rm data/*/AT20G*
+> > 	rm data/*/NVSS*
+> > 	rm data/*/SUMSS*
+> > ```
+> {: .solution}
+> 
+{: .challenge}
+
+Unless we fell into some crazy debuging holes, that should have taken a fraction of the time that the NVSS additions did.
 
 
 ## Documentation & Reproducibility
