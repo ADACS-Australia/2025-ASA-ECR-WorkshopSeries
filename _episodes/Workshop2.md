@@ -777,102 +777,10 @@ Best practices, configuration files.
 
 By following these best practices, you can enhance the reproducibility and transparency of your research, making it easier for others to understand, replicate, and build upon your work.
 
-#
 
-## Sharing & Building on Your Workflow
 
-Publishing and designing workflows for reuse.
 
-### Publishing to PyPI and Uploading to Zenodo
-
-#### Publishing to PyPI
-
-To share your Python project with the community, you can publish it to the Python Package Index (PyPI). Here are the steps to do so:
-
-1. **Prepare Your Project**:
-    - Ensure your project has the necessary files, including `pyproject.toml`, `README.md`, and a license file.
-     - Example `pyproject.toml`:
-        ```toml
-        [build-system]
-        requires = ["setuptools>=42", "wheel"]
-        build-backend = "setuptools.build_meta"
-
-        [project]
-        name = "your_project_name"
-        version = "0.1.0"
-        description = "A brief description of your project"
-        readme = "README.md"
-        requires-python = ">=3.10"
-        license = {text = "MIT"}
-        authors = [
-          {name = "Your Name", email = "your.email@example.com"}
-        ]
-        classifiers = [
-          "Programming Language :: Python :: 3",
-          "License :: OSI Approved :: MIT License",
-          "Operating System :: OS Independent"
-        ]
-        dependencies = []
-
-        [project.urls]
-        "Homepage" = "https://github.com/yourusername/your_project"
-        ```
-
-2. **Build Your Package**:
-    - Use `build` to create your package:
-      ```sh
-      pip install build
-      python -m build
-      ```
-
-3. **Upload to PyPI**:
-    - Use `uv` to upload your package to PyPI:
-      ```sh
-      pip install uv
-      uv pypi publish dist/*
-      ```
-
-#### Uploading to Zenodo
-
-Zenodo is a research data repository that allows you to share datasets, software, and other research outputs. Here's how to upload your project to Zenodo:
-
-1. **Create a Zenodo Account**:
-    - Sign up for an account at [Zenodo](https://zenodo.org/).
-
-2. **Upload Your Project**:
-    - Go to the "Upload" page and fill in the required metadata fields, such as title, author(s), description, and keywords.
-    - Upload your project files (e.g., source code, documentation, datasets).
-
-3. **Assign a DOI**:
-    - Zenodo will automatically assign a Digital Object Identifier (DOI) to your upload, making it citable.
-
-#### Required Metadata
-
-When publishing to PyPI and Zenodo, it's important to include comprehensive metadata to ensure your project is discoverable and properly attributed. Key metadata fields include:
-
-- **Title**: A clear and descriptive title of your project.
-- **Author(s)**: Names and contact information of the contributors.
-- **Description**: A detailed description of your project, including its purpose and key features.
-- **Keywords**: Relevant keywords to help others find your project.
-- **License**: The license under which your project is released.
-- **Version**: The version number of your project.
-
-#### Associating a DOI with a Version
-
-To associate a DOI with a specific version of your work, follow these steps:
-
-1. **Versioning**:
-    - Use semantic versioning (e.g., 1.0.0) to clearly identify different versions of your project.
-
-2. **Zenodo Integration**:
-    - If your project is hosted on GitHub, you can enable Zenodo integration to automatically generate a DOI for each release. Go to the Zenodo GitHub page and enable the repository you want to link.
-
-3. **Release on GitHub**:
-    - Create a new release on GitHub, which will trigger Zenodo to archive the release and assign a DOI.
-
-By following these steps, you can effectively share your project with the community, ensuring it is properly documented, discoverable, and citable.
-
-## Discussion & Problem Solving
+## Session 2 topics
 
 ### Strategies for Better Documentation
 
