@@ -76,7 +76,7 @@ We will firstly look at how we would do all of this manually (because thats how 
 
 ## A workflow for humans
 
-1. Download the AT20G dataset from [this repo](./data/Workshop1/AT20G.tsv) (a subset of the entire catalogue from [ViZieR](https://vizier.cds.unistra.fr/viz-bin/VizieR?-source=J/MNRAS/402/2403&-to=3))
+1. Download the AT20G dataset from [this repo]({{page.root}}{% link data/Workshop1/AT20G.tsv %}) (a subset of the entire catalogue from [ViZieR](https://vizier.cds.unistra.fr/viz-bin/VizieR?-source=J/MNRAS/402/2403&-to=3))
 1. Separate the meta data from the table data (starts with `#`)
 1. Remove the second two lines of the table header (units and `----`)
 1. Count the number of rows in the data, record for later use
