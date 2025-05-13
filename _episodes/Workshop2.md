@@ -951,7 +951,75 @@ That leaves us with items 1 and 7 - writing and maintaining workflow documentati
 > {: .solution}
 {: .challenge}
 
+## Adding Self-Documentation to Makefile Outputs
 
+To make your workflow self-documenting, you can modify your `makefile` to generate a log file or metadata file that records the details of each workflow execution. This can include information such as the date and time of execution, the targets that were built, and the commands that were run.
+
+Here’s an example of how you can modify your `makefile` to include self-documentation:
+
+```makefile
+.PHONY: AT20G NVSS SUMSS all clean log
+
+LOGFILE := workflow_log.txt
+
+# Default target
+all: AT20G NVSS SUMSS log
+
+# AT20G survey
+AT20G: data/final/AT20G_final.csv
+    @echo "AT20G target completed on $$(date)" >> $(LOGFILE)
+
+data/final/AT20G_final.csv: data/processing/AT20G_table.tsv src/clean_tables.py
+    python src/clean_tables.py -s AT20G -i data/processing/AT20G_table.tsv -o data/final/AT20G_final.csv
+    @echo "Generated AT20G_final.csv from AT20G_table.tsv" >> $(LOGFILE)
+
+# NVSS survey
+NVSS: data/final/NVSS_final.csv
+    @echo "NVSS target completed on $$(date)" >> $(LOGFILE)
+
+data/final/NVSS_final.csv: data/processing/NVSS_table.tsv src/clean_tables.py
+    python src/clean_tables.py -s NVSS -i data/processing/NVSS_table.tsv -o data/final/NVSS_final.csv
+    @echo "Generated NVSS_final.csv from NVSS_table.tsv" >> $(LOGFILE)
+
+# SUMSS survey
+SUMSS: data/final/SUMSS_final.csv
+    @echo "SUMSS target completed on $$(date)" >> $(LOGFILE)
+
+data/final/SUMSS_final.csv: data/processing/SUMSS_table.tsv src/clean_tables.py
+    python src/clean_tables.py -s SUMSS -i data/processing/SUMSS_table.tsv -o data/final/SUMSS_final.csv
+    @echo "Generated SUMSS_final.csv from SUMSS_table.tsv" >> $(LOGFILE)
+
+# Log target
+log:
+    @echo "Workflow executed on $$(date)" >> $(LOGFILE)
+    @echo "Targets built: AT20G NVSS SUMSS" >> $(LOGFILE)
+
+# Clean target
+clean:
+    rm -f data/*/AT20G* data/*/NVSS* data/*/SUMSS*
+    @echo "Cleaned all generated files on $$(date)" >> $(LOGFILE)
+```
+
+### Explanation:
+1. **`LOGFILE` Variable**: A variable `LOGFILE` is defined to store the name of the log file (`workflow_log.txt`).
+2. **Logging Commands**: Each target appends a message to the log file using `@echo`. This includes details about the target and the date/time of execution.
+3. **`log` Target**: A dedicated `log` target is added to record general workflow execution details, such as the date and the targets built.
+4. **Clean Logging**: The `clean` target also logs when files are removed.
+
+### Example Log Output (`workflow_log.txt`):
+```
+Workflow executed on Mon Oct 02 14:30:00 2023
+Targets built: AT20G NVSS SUMSS
+Generated AT20G_final.csv from AT20G_table.tsv
+AT20G target completed on Mon Oct 02 14:30:05 2023
+Generated NVSS_final.csv from NVSS_table.tsv
+NVSS target completed on Mon Oct 02 14:30:10 2023
+Generated SUMSS_final.csv from SUMSS_table.tsv
+SUMSS target completed on Mon Oct 02 14:30:15 2023
+Cleaned all generated files on Mon Oct 02 14:35:00 2023
+```
+
+This approach ensures that your workflow is self-documenting and provides a clear record of what was executed and when. It can be particularly useful for debugging or for tracking the history of workflow runs.
 
 ## Session 2 topics
 
