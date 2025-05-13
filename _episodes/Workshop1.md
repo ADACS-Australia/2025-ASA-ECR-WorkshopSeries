@@ -82,7 +82,7 @@ We will firstly look at how we would do all of this manually (because thats how 
 1. Count the number of rows in the data, record for later use
 1. Correct the data types of the columns (currently most are strings, thanks to missing data)
 1. Remove all rows with no 5/8GHz measurements (columns S8 and S5)
-1. Keep only rows with 12 <= RA <= 18
+1. Keep only rows with 12 <= RA <= 18 (hours)
 1. Count the number of rows rejected/remaining, record for later use
 1. Delete all columns from Ep -> Sp
 1. Save the filtered file for analysis work as `AT20G_clean.csv`
@@ -228,11 +228,11 @@ In order to separate the metadata rows we'll use a program called `grep` which i
 
 > ## Select all the lines that start with a `#`
 > ```
-> grep -e '^#'
+> grep -e '^#' AT20G.tsv
 > ```
 > {: .language-bash}
 > 
-> Here we are telling `grep` to print out all the rows that have a `#` as the first character on the line (`^` represents the start of the line).
+> Here we are telling `grep` to print out all the rows of the given file that have a `#` as the first character on the line (`^` represents the start of the line).
 > Type this into your terminal and review the output.
 >
 {: .challenge}
@@ -593,7 +593,7 @@ Even easier than this we could rename the file to be `workflow.sh` and it would 
 Pretty easy right?
 
 > ## Create executable workflow file (optional)
-> If you add a `!# /usr/bin/env bash` to the **first** line of your workflow file, then linux will interpret all of the following lines as bash code and execute them as such.
+> If you add a `#! /usr/bin/env bash` to the **first** line of your workflow file, then linux will interpret all of the following lines as bash code and execute them as such.
 > Additionally, if you change the file permissions to be 'executable' using `chmod ugo+x` then you'll be able to run your script from the command line by calling it by name (`./workflow.sh`).
 >
 {: .solution}
@@ -721,7 +721,7 @@ AT20G_header.txt
 AT20G_table.tsv
 AT20G_final.csv
 clean_AT20G.py
-.env/
+env/
 requirements.txt
 workflow.sh
 ```
@@ -747,7 +747,7 @@ Structuring your files and directories properly is crucial for maintaining a cle
 Example project structure:
 ```
 my_project/
-├── .env/
+├── env/
 ├── config/
 │   └── config.yaml
 ├── data/
@@ -772,7 +772,8 @@ Not all of the directores and files listed above are essntial for every project,
 > 2. Create a `src` directory for storing code
 > 3. Create a `README.md` file with a short description of the project.
 > 4. Move all the data files into the relevant directories.
-> 5. Update your `workflow.sh` file so that it will work with the new directory structure.
+> 5. Update your `clean_AT20G.py` script to read/write using the new locations.
+> 6. Update your `workflow.sh` file so that it will work with the new directory structure.
 >
 > Note that you'll have to update the paths to the various files now that you have moved them!
 >
@@ -827,13 +828,13 @@ Note: The indentation is a single tab character.
 Our workflow so far is:
 ```bash
 # Download the data
-wget https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
+wget -O data/raw/AT20G.tsv https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
 # Save the meta-data
-grep -e '^#' AT20G.tsv > AT20G_header.txt
+grep -e '^#' data/raw/AT20G.tsv > data/final/AT20G_header.txt
 # Save just the table with a 1 line header
-grep -v -e '^#' -e '^-' -e '^deg' -e '^$' AT20G.tsv > AT20G_table.tsv
+grep -v -e '^#' -e '^-' -e '^deg' -e '^$' data/raw/AT20G.tsv > data/processing/AT20G_table.tsv
 # Clean and filter with python
-python clean_AT20G.py
+python src/clean_AT20G.py
 ```
 
 We can break down the above process by tracking the files that arecreated as follows:
