@@ -321,7 +321,7 @@ please preview your site before committing, and make sure to run
 </p>
 
 <p>
-Before the workshop, you should visit the <a href="{% link _episodes/Setup.md %}">Setup Page</a> to set your expectations of how this workshop will be run.
+Before the workshop, you should visit the <a href="{{page.root}}{% link _episodes/Setup.md %}">Setup Page</a> to set your expectations of how this workshop will be run.
 </p>
 
 {% comment %}
