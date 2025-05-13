@@ -73,18 +73,18 @@ In the last workshop we:
 > ## Last weeks code
 > If you didn't participate last week, no stress
 > We ended up with a directory structure as follows:
-```output
-my-project/
-├── .env/
-├── data
-│   ├── final/
-│   ├── processing/
-│   └── raw/
-├── makefile
-├── requirements.txt
-└── src
-    └── clean_AT20G.py
-```
+> ```output
+> my-project/
+> ├── .env/
+> ├── data
+> │   ├── final/
+> │   ├── processing/
+> │   └── raw/
+> ├── makefile
+> ├── requirements.txt
+> └── src
+>     └── clean_AT20G.py
+> ```
 > > ## How to make these files
 > > You can copy the following code to make the required files:
 > > 
@@ -193,13 +193,13 @@ Here are some strategies to achieve this:
 2. **Configuration Files**:
     - Store parameters and settings in configuration files (e.g., YAML, JSON). This makes it easy to change configurations without altering the code.
     - Example of a YAML configuration file:
-      ```yaml
-      data_source: "https://example.com/data.csv"
-      output_dir: "/path/to/output"
-      preprocessing:
-        - step: "normalize"
-          method: "min-max"
-      ```
+        ```yaml
+        data_source: "https://example.com/data.csv"
+        output_dir: "/path/to/output"
+        preprocessing:
+            - step: "normalize"
+                method: "min-max"
+        ```
     - Example of reading a YAML configuration file in Python:
       ```python
       import yaml
@@ -292,7 +292,7 @@ df_fix.to_csv('AT20G_final.csv', index=False)
 
 We can generalise the script by doing the following things:
 1. Making the input and ouput tables configurable
-2. Letting the user specify the delimiter, but having commas as default.
+2. Letting the user specify the delimiter, but having tabs as default.
 3. Determining which columns should be kept/removed from user input
 4. Keeping all the above options in a config file, so we can later determine how the script was run.
 
@@ -376,6 +376,7 @@ This minimises the initial outlay of work, without incurring a large technical d
 > >     # drop the columns that we don't need
 > >     table = table[['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']]
 > >     return table
+> > 
 > > if __name__ == '__main__':
 > >     table = load('AT20G_table.tsv')
 > >     table = clean_AT20G(table)
@@ -450,7 +451,7 @@ Before we can do that we need to understand how the other catalogue formats are 
 >
 > What parts of the workflow would we keep the same?
 >
-> ## Changes
+> > ## Changes
 > > Some of the processing is going to be common between the two catalogues:
 > > - loading and saving
 > > - filtering on the "_RA2000" column
