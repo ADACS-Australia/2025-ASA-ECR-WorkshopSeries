@@ -17,17 +17,6 @@ keypoints:
 - "GitHub Actions enable automation of workflows, saving time and reducing manual errors."
 ---
 
-## Workshop outline:
-
-| Time (AEST) | Focus | Details |
-| -- | -- | -- |
-| 2:00 - 2:10 PM | Overview | GitHub as a tool for scientific collaboration. |
-| 2:10 - 2:30 PM | Core GitHub Features | Repositories, issues, pull requests, and wikis. |
-| 2:30 - 2:50 PM | Advanced GitHub Tools | GitHub Actions, testing, publishing packages. |
-| 2:50 - 2:55 PM | Break |  |
-| 2:55 - 3:20 PM | Interactive Repository Setup | Setting up a project repository, hands-on practice. |
-| 3:20 - 3:30 PM | Discussion & Problem Solving | Integrating GitHub into research workflows. |
-
 ## Overview
 
 GitHub as a tool for scientific collaboration.
