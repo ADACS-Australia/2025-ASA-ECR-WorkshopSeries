@@ -94,22 +94,24 @@ In the last workshop we:
 > > all: data/final/AT20G_final.csv data/final/AT20G_header.txt
 > > 
 > > data/raw/AT20G.tsv:
-> >         wget -O data/raw/AT20G.tsv https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
+> > 	wget -O data/raw/AT20G.tsv https://raw.githubusercontent.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/refs/heads/gh-pages/data/Workshop1/AT20G.tsv
 > > 
 > > data/final/AT20G_header.txt: data/raw/AT20G.tsv
-> >         grep -e '^\#' data/raw/AT20G.tsv > data/final/AT20G_header.txt
+> > 	grep -e '^\#' data/raw/AT20G.tsv > data/final/AT20G_header.txt
 > > 
 > > data/processing/AT20G_table.tsv: data/raw/AT20G.tsv
-> >         grep -v -e '^\#' -e '^-' -e '^deg' -e '^$$' data/raw/AT20G.tsv > data/processing/AT20G_table.tsv
+> > 	grep -v -e '^\#' -e '^-' -e '^deg' -e '^$$' data/raw/AT20G.tsv > data/processing/AT20G_table.tsv
 > > 
 > > # Note that I put the script as a dependency so that this step is redone if the script is updated :D
 > > data/final/AT20G_final.csv: data/processing/AT20G_table.tsv src/clean_AT20G.py
-> >         python src/clean_AT20G.py
+> > 	python src/clean_AT20G.py
 > > 
 > > # Delete all the data files
 > > clean:
-> >         rm data/*/AT20G*
+> > 	rm data/*/AT20G*
 > > ```
+> > The indentation in the makefile should be a single tab, not 4-8 spaces.
+> > 
 > > `clean_AT20G.py`
 > > ```python
 > > import pandas as pd
@@ -270,7 +272,7 @@ import pandas as pd
 import numpy as np
 
 # Read the table
-df = pd.read_csv('AT20G_table.tsv', delimiter='\t')
+df = pd.read_csv('data/processing/AT20G_table.tsv', delimiter='\t')
 
 # replace all the spaces with nulls and change the column types
 df_fix = df.replace(r'^\s*$', np.nan, regex=True)
@@ -286,14 +288,14 @@ df_fix = df_fix[mask]
 df_fix = df_fix[['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']]
 
 # save to a file
-df_fix.to_csv('AT20G_final.csv', index=False)
+df_fix.to_csv('data/final/AT20G_final.csv', index=False)
 
 ```
 
 We can generalise the script by doing the following things:
-1. Making the input and ouput tables configurable
+1. Making the input and ouput tables configurable.
 2. Letting the user specify the delimiter, but having tabs as default.
-3. Determining which columns should be kept/removed from user input
+3. Determining which columns should be kept/removed from user input.
 4. Keeping all the above options in a config file, so we can later determine how the script was run.
 
 To do all of this we'll use the `configargparse` option noted above.
@@ -309,27 +311,27 @@ We'll start by refactoring our code to reflect this idiom.
 > > import numpy as np
 > > 
 > > def main():
-> >   # Read the table
-> >   df = pd.read_csv('AT20G_table.tsv', delimiter='\t')
-> > 
-> >   # replace all the spaces with nulls and change the column types
-> >   df_fix = df.replace(r'^\s*$', np.nan, regex=True)
-> >   for colname in ['S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']:
-> >     df_fix[colname] = df_fix[colname].astype(float)
-> > 
-> >   # filter out all the rows with null S8/S5 and keep only those in a given RA range
-> >   mask = ~(df_fix['S5'].isnull() | df_fix['S8'].isnull())
-> >   mask = mask & ((df_fix['_RAJ2000'] > 12*15) & (df_fix['_RAJ2000']<18*15))
-> >   df_fix = df_fix[mask]
-> > 
-> >   # drop the columns that we don't need
-> >   df_fix = df_fix[['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']]
-> > 
-> >   # save to a file
-> >   df_fix.to_csv('AT20G_final.csv', index=False)
+> >     # Read the table
+> >     df = pd.read_csv('data/processing/AT20G_table.tsv', delimiter='\t')
+> >   
+> >     # replace all the spaces with nulls and change the column types
+> >     df_fix = df.replace(r'^\s*$', np.nan, regex=True)
+> >     for colname in ['S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']:
+> >       df_fix[colname] = df_fix[colname].astype(float)
+> >   
+> >     # filter out all the rows with null S8/S5 and keep only those in a given RA range
+> >     mask = ~(df_fix['S5'].isnull() | df_fix['S8'].isnull())
+> >     mask = mask & ((df_fix['_RAJ2000'] > 12*15) & (df_fix['_RAJ2000']<18*15))
+> >     df_fix = df_fix[mask]
+> >   
+> >     # drop the columns that we don't need
+> >     df_fix = df_fix[['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5']]
+> >   
+> >     # save to a file
+> >     df_fix.to_csv('data/final/AT20G_final.csv', index=False)
 > > 
 > > if __name__ == '__main__':
-> >   main()
+> >     main()
 > > ```
 > {: .solution}
 {: .challenge}
@@ -378,16 +380,16 @@ This minimises the initial outlay of work, without incurring a large technical d
 > >     return table
 > > 
 > > if __name__ == '__main__':
-> >     table = load('AT20G_table.tsv')
+> >     table = load('data/processing/AT20G_table.tsv', delimiter='\t')
 > >     table = clean_AT20G(table)
-> >     save(table, 'AT20G_final.csv')
+> >     save(table, 'data/final/AT20G_final.csv')
 > > ```
 > {: .solution}
 {: .challenge}
 
 Now we are in a position to be able to use config argparse to modify the `if __name__` block of our code.
 
-> ## Updated Script with `configargparse`
+> ## Update Script with `configargparse`
 > Modify the `clean_tables.py` script to use `configargparse` for accepting input and output filenames as arguments.
 > Keep the existing behaviour of our code by making the current hard-coded values the default.
 >
@@ -421,8 +423,8 @@ Now we are in a position to be able to use config argparse to modify the `if __n
 > > if __name__ == '__main__':
 > >     parser = configargparse.ArgParser(default_config_files=["config.yaml"])
 > >     parser.add("--config", is_config_file=True, help="Path to configuration file")
-> >     parser.add("-i", "--input_file", type=str, default="AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
-> >     parser.add("-o", "--output_file", type=str, default="AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
+> >     parser.add("-i", "--input_file", type=str, default="data/processing/AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
+> >     parser.add("-o", "--output_file", type=str, default="data/final/AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
 > >     parser.add("-d", "--delimiter", type=str, default="\t", help="Delimiter used in the input file (default: tab)")
 > > 
 > >     args = parser.parse_args()
@@ -538,8 +540,8 @@ This can be done without changing how the script is called from the command line
 > > if __name__ == '__main__':
 > >     parser = configargparse.ArgParser(default_config_files=["config.yaml"])
 > >     parser.add("--config", is_config_file=True, help="Path to configuration file")
-> >     parser.add("-i", "--input_file", type=str, default="AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
-> >     parser.add("-o", "--output_file", type=str, default="AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
+> >     parser.add("-i", "--input_file", type=str, default="data/processing/AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
+> >     parser.add("-o", "--output_file", type=str, default="data/final/AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
 > >     parser.add("-d", "--delimiter", type=str, default="\t", help="Delimiter used in the input file (default: tab)")
 > >     parser.add("-s", "--survey", type=str, default="AT20G", help="Survey to clean (default: AT20G)")
 > >     args = parser.parse_args()
@@ -572,8 +574,8 @@ Now we can make a new function `clean_NVSS` to clean the NVSS dataset using the 
 > > if __name__ == '__main__':
 > >     parser = configargparse.ArgParser(default_config_files=["config.yaml"])
 > >     parser.add("--config", is_config_file=True, help="Path to configuration file")
-> >     parser.add("-i", "--input_file", type=str, default="AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
-> >     parser.add("-o", "--output_file", type=str, default="AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
+> >     parser.add("-i", "--input_file", type=str, default="data/processing/AT20G_table.tsv", help="Path to the input file (default: AT20G_table.tsv)")
+> >     parser.add("-o", "--output_file", type=str, default="data/final/AT20G_final.csv", help="Path to the output file (default: AT20G_final.csv)")
 > >     parser.add("-d", "--delimiter", type=str, default="\t", help="Delimiter used in the input file (default: tab)")
 > >     parser.add("-s", "--survey", type=str, default="AT20G", help="Survey to clean (default: AT20G)")
 > >     args = parser.parse_args()
@@ -667,7 +669,7 @@ We can of course test this hypothesis by completing all this workf ro the SUMSS 
 > The data are here: [SUMSS.tsv](https://github.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/raw/refs/heads/gh-pages/data/Workshop2/SUMSS.tsv)
 >
 > - Download the data
-> - Decide what pre-processing needs to be done
+> - Inspect the data and decide what pre-processing needs to be done
 > - Update the `makefile` to include a target called SUMSS, and to include SUMSS data in the clean target
 > - Update `clean_tables.py` to accept SUMSS as a table option, and then perform the relevant cleaning operations
 >
@@ -973,26 +975,12 @@ data/final/AT20G_final.csv: data/processing/AT20G_table.tsv src/clean_tables.py
     python src/clean_tables.py -s AT20G -i data/processing/AT20G_table.tsv -o data/final/AT20G_final.csv
     @echo "Generated AT20G_final.csv from AT20G_table.tsv" >> $(LOGFILE)
 
-# NVSS survey
-NVSS: data/final/NVSS_final.csv
-    @echo "NVSS target completed on $$(date)" >> $(LOGFILE)
-
-data/final/NVSS_final.csv: data/processing/NVSS_table.tsv src/clean_tables.py
-    python src/clean_tables.py -s NVSS -i data/processing/NVSS_table.tsv -o data/final/NVSS_final.csv
-    @echo "Generated NVSS_final.csv from NVSS_table.tsv" >> $(LOGFILE)
-
-# SUMSS survey
-SUMSS: data/final/SUMSS_final.csv
-    @echo "SUMSS target completed on $$(date)" >> $(LOGFILE)
-
-data/final/SUMSS_final.csv: data/processing/SUMSS_table.tsv src/clean_tables.py
-    python src/clean_tables.py -s SUMSS -i data/processing/SUMSS_table.tsv -o data/final/SUMSS_final.csv
-    @echo "Generated SUMSS_final.csv from SUMSS_table.tsv" >> $(LOGFILE)
+#...
 
 # Log target
 log:
     @echo "Workflow executed on $$(date)" >> $(LOGFILE)
-    @echo "Targets built: AT20G NVSS SUMSS" >> $(LOGFILE)
+    @echo "Targets to build: AT20G NVSS SUMSS" >> $(LOGFILE)
 
 # Clean target
 clean:
