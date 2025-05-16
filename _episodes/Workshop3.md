@@ -21,17 +21,6 @@ keypoints:
 - Identifying and solving research bottlenecks can improve overall productivity.
 ---
 
-## Workshop outline:
-
-| Time (AEST) | Focus | Details |
-| -- | -- | -- |
-| 2:00 - 2:10 PM | Overview | Scaling resources rather than optimizing code. |
-| 2:10 - 2:30 PM | Scaling Up Your Resources | Using multiple cores, nodes, and parallel computing. |
-| 2:30 - 2:50 PM | High-Performance Computing | Clusters, cloud computing, best practices. |
-| 2:50 - 2:55 PM | Break |  |
-| 2:55 - 3:20 PM | Hands-On Resource Management | Planning and simulating distributed computing tasks. |
-| 3:20 - 3:30 PM | Discussion & Problem Solving | Addressing research bottlenecks. |
-
 ## Overview
 
 Scaling resources rather than optimizing code.
