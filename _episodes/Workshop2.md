@@ -66,12 +66,13 @@ In the last workshop we:
 - Looked at some different `bash` and `python` tools that could be used to automate different parts of the workflow.
 - Combined all the tools together to make a `workflow.sh` script that we could run from the command line.
 - Organised our project directory to make it clear what the intent of each file is.
-- Creatd a virtual environment for our project to make it easy to run on different computers.
-- Turned our `workflow.sh` into a `makefile` so that we could easily run the workflow without repeating unneccessary steps.
-- Talkd about using Nextflow instead of make, but didn't actually do any Nextflow coding.
+- Created a virtual environment for our project to make it easy to run on different computers.
+- Turned our `workflow.sh` into a `makefile` so that we could easily run the workflow without repeating unnecessary steps.
+- Talked about using Nextflow instead of make, but didn't actually do any Nextflow coding.
 
 > ## Last weeks code
-> If you didn't participate last week, no stress
+> If you didn't participate last week, this is not a problem.
+> 
 > We ended up with a directory structure as follows:
 > ```output
 > my-project/
@@ -142,7 +143,7 @@ In the last workshop we:
 > > pandas==2.2.3
 > > ```
 > > 
-> > Making the `.env` file we can run:
+> > Making the `.env` folder for our virtual environment:
 > > ```bash
 > > python -m venv .env
 > > source .env/bin/activate
@@ -156,11 +157,10 @@ In the last workshop we:
 # Today's focus
 
 In this workshop we are going to revise the work that we did last time with the goal of making the scripts and workflow more flexible.
-Our goal is to be able to process additional data without haveing to duplicate the entire workflow.
-Secondary goals include documenting our work, and publishing workflows so that other's can build upon them.
-Documenting our work means that it's easier to describe when it comes time for writing a report or paper.
+Our goal is to be able to process additional data without having to duplicate the entire workflow.
+Secondary goals include documenting our work, and publishing workflows so that others can build upon them.
+Documenting our work means that it's easier to write a report or paper.
 Comprehensive documentation includes detailed descriptions of methodologies, data sources, software used, and any specific configurations or parameters.
-Publishing our work makes it easier for others to build on your work (increasing your citations and impact), or for people to reach out with collaborative opportunities.
 
 ## Automation & Workflow Repeatability
 
@@ -341,7 +341,7 @@ We have some options here:
 1. Write separate functions for the different catalogues that we will use
 2. Write a single, but very flexible, function that can handle any catalogue
 
-The second option sounds good, but it will certainly be more work, and it may be over-engineering a solution.
+The second option is attractive but it may involve more work and risk over-engineering the solution.
 Let us take the path of small resistance, and start with option 1, and then move toward option 2 in the future if we need to.
 This minimises the initial outlay of work, without incurring a large technical debt.
 
@@ -387,7 +387,7 @@ This minimises the initial outlay of work, without incurring a large technical d
 > {: .solution}
 {: .challenge}
 
-Now we are in a position to be able to use config argparse to modify the `if __name__` block of our code.
+Now we are in a position to be able to use `configargparse` to modify the `if __name__` block of our code.
 
 > ## Update Script with `configargparse`
 > Modify the `clean_tables.py` script to use `configargparse` for accepting input and output filenames as arguments.
@@ -441,6 +441,27 @@ Now we are in a position to be able to use config argparse to modify the `if __n
 
 
 Now we have a script that we can modify from the command line to read/write different filenames, and to accept different  file types (.csv and .tsv) using the `--delimiter` option.
+We also get a new feature for free: we can run `--help` and it will tell the user what the various options are and what they do:
+
+```output
+$ python clean_tables.py --help
+usage: clean_tables.py [-h] [--config CONFIG] [-i INPUT_FILE] [-o OUTPUT_FILE] [-d DELIMITER]
+
+options:
+  -h, --help            show this help message and exit
+  --config CONFIG       Path to configuration file
+  -i INPUT_FILE, --input_file INPUT_FILE
+                        Path to the input file (default: AT20G_table.tsv)
+  -o OUTPUT_FILE, --output_file OUTPUT_FILE
+                        Path to the output file (default: AT20G_final.csv)
+  -d DELIMITER, --delimiter DELIMITER
+                        Delimiter used in the input file (default: tab)
+
+Args that start with '--' can also be set in a config file (config.yaml or specified via --config). Config file syntax allows: key=value, flag=true,
+stuff=[a,b,c] (for details, see syntax at https://goo.gl/R74nmi). In general, command-line values override config file values which override defaults.
+```
+The great benefit of this is that now you (and others) don't need to open the script in order to figure out how to use it.
+
 Our next step is to change our script so that it can work on other catalogues.
 Before we can do that we need to understand how the other catalogue formats are different, and that means doing some more work by hand.
 
@@ -458,7 +479,7 @@ Before we can do that we need to understand how the other catalogue formats are 
 > > - loading and saving
 > > - filtering on the "_RA2000" column
 > > 
-> > Some of the processing is common but needs to be done slightly differnetly:
+> > Some of the processing is common but needs to be done slightly differently:
 > > - The list of columns to keep
 > > 
 > > Some processing isn't needed for NVSS:
@@ -534,7 +555,7 @@ This can be done without changing how the script is called from the command line
 > >     table = filter_rows(table, colname='_RAJ2000', min_value=12 * 15, max_value=18 * 15)
 > >     table = keep_columns(table, colnames=['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'AT20G', 'RAJ2000', 'DEJ2000', 'S20', 'e_S20', 'S8', 'e_S8', 'S5', 'e_S5'])
 > >     save(table, outfile)
-> >     # return the table incase we want to do something else with it
+> >     # return the table in case we want to do something else with it
 > >     return table
 > > 
 > > if __name__ == '__main__':
@@ -568,7 +589,7 @@ Now we can make a new function `clean_NVSS` to clean the NVSS dataset using the 
 > >     table = filter_rows(table, colname='_RAJ2000', min_value=12 * 15, max_value=18 * 15)
 > >     table = keep_columns(table, colnames=['_Glon', '_Glat', '_RAJ2000', '_DEJ2000', 'NVSS', 'RAJ2000', 'DEJ2000', 'S1.4', 'e_S1.4'])
 > >     save(table, outfile)
-> >     # return the table incase we want to do something else with it
+> >     # return the table in case we want to do something else with it
 > >     return table
 > > 
 > > if __name__ == '__main__':
@@ -604,7 +625,7 @@ Fortunately, given the similarity between the workflows we can do a copy/paste/e
 
 > ## Create an NVSS workflow in our `makefile`
 > Use your knowledge from inspecting the NVSS file, and the existing AT20G workflow, to make a workflow for NVSS in our `makefile`.
-> - Allow users to choose wich workflow to run with new targets: `NVSS` and `AT20G`
+> - Allow users to choose which workflow to run with new targets: `NVSS` and `AT20G`
 > - Update the `all` target to include both `NVSS` and `AT20G`
 > 
 > > ## Result
@@ -656,14 +677,14 @@ Fortunately, given the similarity between the workflows we can do a copy/paste/e
 > 
 {: .challenge}
 
-Last week we created the workflow for AT20G from scratch and it took essentialy the whole lesson to do.
+Last week, we created the workflow for AT20G from scratch, which took the entire lesson.
 This week, however, we are building our knowledge and success from last week to make a workflow for NVSS in much less time.
 If we now make a workflow that includes another survey (SUMSS), it should take even less time because:
 - We can just think about what is different between SUMSS and NVSS or AT20G rather than working from scratch
 - We have already set up our `clean_tables.py` script to be adaptable for different surveys
 - Our `makefile` already has different sections for different surveys
 
-We can of course test this hypothesis by completing all this workf ro the SUMSS survey.
+We can of course test this hypothesis by completing all this work for the SUMSS survey.
 
 > ## Incorporate the SUMSS survey into our workflow
 > The data are here: [SUMSS.tsv](https://github.com/ADACS-Australia/2025-ASA-ECR-WorkshopSeries/raw/refs/heads/gh-pages/data/Workshop2/SUMSS.tsv)
@@ -685,7 +706,7 @@ We can of course test this hypothesis by completing all this workf ro the SUMSS 
 > >     table = filter_rows(table, colname='_RAJ2000', min_value=12 * 15, max_value=18 * 15)
 > >     table = keep_columns(table, colnames=['_Glon', '_Glat', '_DEJ2000', 'RAJ2000', 'DEJ2000', 'Sp', 'e_Sp'])
 > >     save(table, outfile)
-> >     # return the table incase we want to do something else with it
+> >     # return the table in case we want to do something else with it
 > >     return table
 > > 
 > > if __name__ == '__main__':
@@ -733,17 +754,82 @@ We can of course test this hypothesis by completing all this workf ro the SUMSS 
 > 
 {: .challenge}
 
-Unless we fell into some crazy debuging holes, that should have taken a fraction of the time that the NVSS additions did.
+Unless we fell into some crazy debugging holes, that should have taken a fraction of the time that the NVSS additions did.
 
+### Using the config file
+
+We set up our python script so that instead of having to specify command line args we could just pass a configuration file.
+At the moment we are doing things like 
+```python 
+python src/clean_tables.py -s SUMSS -i data/processing/SUMSS_table.tsv -o data/final/SUMSS_final.csv
+```
+When instead we could be doing 
+```python
+python src/clean_tables.py --config SUMSS.config
+```
+
+Let us now create some config files for our workflow and have `make` use these config files.
+This will mean that whoever wants to configure the workflow doesn't have edit the make file to change the options, and will mean that we can save the `*.config` files for future reference (it's part of the meta-data).
+
+> ## Make some `*.config` files
+> The format of the `.config` files is as follows:
+> ```output
+> # comments with a hash
+> option = value # inline comment
+> 
+> ```
+> Whilst it's possible to use the short option such as `i`, it's good practice to use the long version (`input_file`) so that the config file becomes easier to read by humans.
+>
+> Make a `AT20G.config` file as well as one for NVSS and SUMSS.
+>
+> > ## `AT20G.config`
+> > ```output
+> > input_file = data/processing/AT20G_table.tsv
+> > output_file = data/final/AT20G_final.csv
+> > delimiter = \t
+> > ```
+> >
+> {: .solution}
+> 
+{: .challenge}
+
+We will probably have a bunch of these configuration files for different scripts etc, so it would be a good idea to collect them all together into a new directory `configs/`.
+Our project directory should now look something like this:
+```output
+.
+├── configs
+│   ├── AT20G.config
+│   ├── NVSS.config
+│   └── SUMSS.config
+├── data
+│   ├── final
+│   ├── processing
+│   └── raw
+├── makefile
+├── requirements.txt
+└── src
+    └── clean_tables.py
+```
+
+> ## Update the `makefile`
+> Update the make file so that the `clean_tables.py` script is run using the new `*.config` files.
+>
+> > ## Solution
+> > Change all the `python src/clean_tables.py` to use the relevant `--config <survey>.config` option.
+> >
+> {: .solution}
+>
+{: .challenge}
 
 ## Documentation & Reproducibility
 So far we have mainly focused on the automation and scripting side of making our work reproducible.
-However, if you don't know what the wokflow is supposed to do or how it's supposed to work you wont know when it's appropriate to use or how you might go about adapting it for different uses in the future.
+However, if you don't know what the workflow is supposed to do or how it's supposed to work you 'wont know when it's appropriate to use or how you might go about adapting it for different uses in the future.
+For example, we have set up some configuration files, but haven't described what part of the workflow they are used in or how/when the users should change them.
 Thus it's important that you document not just what the workflow is doing but why.
 
 Imagine a situation where you have run your workflow and it has produced some data that you are going to use for your thesis or a publication.
 At some point you want to know what was done to your data.
-In the case that you have flexibility and options in your workflow, you'll want to know what options were set for the particular data set that you are looking at (ideally without having to ramake it!).
+In the case that you have flexibility and options in your workflow, you'll want to know what options were set for the particular data set that you are looking at (ideally without having to remake it!).
 Thus it would be nice if your workflow could be somehow self-documenting in describing how a given data set has been produced.
 
 However you look at it, documentation is going to be a powerful tool in reproducibility and your ability to build on your previous work.
@@ -799,7 +885,7 @@ However you look at it, documentation is going to be a powerful tool in reproduc
     - Encourage team members to contribute to and review the documentation.
 
 
-We have explore items 4,5,6 in our previous workshop, and item 3 has already been enabeled due to our use of `configargparse` earlier in this workshop.
+We have explored items 4,5,6 in our previous workshop, and item 3 has already been enabled due to our use of `configargparse` earlier in this workshop.
 Version control is an entire topic in and of itself (see [Git-Novice](https://swcarpentry.github.io/git-novice/) from [The Carpentries](https://carpentries.org/)), but will touch on in our [HOWTO: Leverage GitHub for Research]({{page.root}}{% link _episodes/Workshop4.md %}) workshop.
 That leaves us with items 1 and 7 - writing and maintaining workflow documentation.
 
@@ -807,16 +893,14 @@ That leaves us with items 1 and 7 - writing and maintaining workflow documentati
 ## Writing and Maintaining Workflow Documentation
 
 
-### 1. **Self-Documenting Workflows**
-- Workflows that automatically generate documentation about how they were executed.
-- **How to implement?**
+1. **Self-Documenting Workflows**
+    - Workflows that automatically generate documentation about how they were executed.
     - Use configuration files to store parameters and options.
     - Log the execution details (e.g., input/output files, parameters, timestamps) to a text or markdown file.
     - Example:
 
         ```python
         import logging
-        from datetime import datetime
 
         __version__ = 'v1.2.3'
 
@@ -841,72 +925,87 @@ That leaves us with items 1 and 7 - writing and maintaining workflow documentati
             ... # do things
             logging.info("Program <my_script> completed")
         ```
+2. **Capturing Software Versions**
+    - Log the versions of important dependencies.
+    - This can be important even if you have a `requirements.txt` file, as it shows what versions of code were **used** rather than which versions were **required**.
+    - Example:
+        ```python
+        ...
+        logging.info(f"Using numpy {np.__version__}")
+        logging.info(f"Using pandas {pd.__version__}")
+        ...
+        ```
+3. **Generating Metadata**
+    - Include metadata in your output files to describe how they were generated.
+    - Example of metadata in a CSV file:
+        ```csv
+        # Generated by: clean_tables.py
+        # Parameters: input_file=AT20G_table.tsv, output_file=AT20G_final.csv
+        # Software version: v1.2.3
+        ```
+4. **Automating Documentation Updates**
+    - Use scripts to append or update documentation files with new information after each workflow run.
+    - Example:
+        ```bash
+        echo "Workflow run on $(date)" >> documentation.md
+        echo "Input file: $INPUT_FILE" >> documentation.md
+        echo "Output file: $OUTPUT_FILE" >> documentation.md
+        ```
 
-### 2. **Capturing Software Versions**
-- Use tools like `pip freeze` to capture the versions of all dependencies.
-- This can be important eve if you have a `requirements.txt` file, as it shows what versions of code were **used** rather than which versions were **required**.
-- Example:
-    ```bash
-    pip freeze > requirements_versions.txt
-    ```
+### Making a self-documenting workflow
 
-### 3. **Generating Metadata**
-- Include metadata in your output files to describe how they were generated.
-- Example of metadata in a CSV file:
-    ```csv
-    # Generated by: clean_tables.py
-    # Parameters: input_file=AT20G_table.tsv, output_file=AT20G_final.csv
-    # Software version: v1.2.3
-    ```
 
-### 4. **Automating Documentation Updates**
-- Use scripts to append or update documentation files with new information after each workflow run.
-- Example:
-    ```bash
-    echo "Workflow run on $(date)" >> documentation.md
-    echo "Input file: $INPUT_FILE" >> documentation.md
-    echo "Output file: $OUTPUT_FILE" >> documentation.md
-    ```
+> ## Modify `clean_tables.py` to narrate its operation
+> Use `print()` or `logging.info()` to give the user feedback during script execution.
+> 
+> Assume that we want to know what processing / filtering is being done, and what options are used in each.
+>
+> > ## Solution
+> > ```python
+> > ...
+> > import logging
+> > 
+> > def setup_logger(log_file="clean_tables.log"):
+> >     ...
+> > 
+> > def load(filename, delimiter):
+> >     ...
+> >     logging.info(f"Reading {filename} with delimiter {delimiter}")
+> >     ...
+> > 
+> > def convert_cols(table, colnames):
+> >     ...
+> >     logging.info(f"Converting columns {colnames} to float format")
+> >     ...
+> > 
+> > def filter_rows(table, colname, min_value, max_value):
+> >     ...
+> >     logging.info(f"Keeping only rows with {min_value} <= {colname} <= {max_value}")
+> >     ...
+> > 
+> > # And similar things for other functions.
+> > 
+> > if __name__ == "__main__":
+> >     ...
+> >     args = parser.parse_args()
+> > 
+> >     if args.survey.upper() == "AT20G":
+> >         logging.info("Applying rules from AT20G")
+> >         clean_AT20G(args.input_file, args.output_file)
+> >     elif args.survey.upper() == "NVSS":
+> >         logging.info("Applying rules from NVSS")
+> >         clean_NVSS(args.input_file, args.output_file)
+> >     elif args.survey.upper() == "SUMSS":
+> >         logging.info("Applying rules from SUMSS")
+> >         clean_SUMSS(args.input_file, args.output_file)
+> >     else:
+> >         logging.info(f"Unknown survey: {args.survey}. Please choose from AT20G, NVSS, or SUMSS.")
+> > 
+> > ```
+> {: .solution}
+>
+{: .challenge}
 
-### 5. **Using Markdown for Documentation**
-- Markdown is lightweight and easy to read.
-- Example structure for workflow documentation:
-    ```markdown
-    # Workflow Documentation
-
-    ## Overview
-    This workflow processes astronomical data to clean and filter it.
-
-    ## Parameters
-    - Input file: `AT20G_table.tsv`
-    - Output file: `AT20G_final.csv`
-    - RA range: 12h to 18h
-
-    ## Software
-    - Python: 3.10
-    - Pandas: 2.2.3
-    - NumPy: 2.2.4
-
-    ## Execution Log
-    - Run on: 2023-10-01
-    - Command: `python clean_tables.py -i AT20G_table.tsv -o AT20G_final.csv`
-    ```
-
-### 6. **Version Control Integration**
-- Use Git to track changes in your workflow and documentation.
-- Include the Git commit hash in your logs for traceability.
-- Example:
-    ```bash
-    git rev-parse HEAD >> workflow_log.txt
-    ```
-
-### Hands-On Exercise
-1. **Create a Self-Documenting Workflow**:
-    - Modify an existing script to log parameters, options, and software versions to a file.
-2. **Generate Metadata**:
-    - Add metadata to an output file describing how it was produced.
-3. **Automate Documentation Updates**:
-    - Write a script to append execution details to a markdown file.
 
 > ## Modify `clean_tables.py` to add some metadata to the output table.
 >
@@ -925,7 +1024,7 @@ That leaves us with items 1 and 7 - writing and maintaining workflow documentati
 >         table.to_csv(f, index=False)
 > ```
 >
-> You'll need to collect the relevant meta data into a dictionary and hand it to this function when you save the file.
+> You'll need to collect the relevant metadata into a dictionary and hand it to this function when you save the file.
 >
 > > ## Example solution
 > > ```python
@@ -956,6 +1055,7 @@ That leaves us with items 1 and 7 - writing and maintaining workflow documentati
 ## Adding Self-Documentation to Makefile Outputs
 
 To make your workflow self-documenting, you can modify your `makefile` to generate a log file or metadata file that records the details of each workflow execution. This can include information such as the date and time of execution, the targets that were built, and the commands that were run.
+**Note**: If your individual scripts do all the documentation that is needed, then you might not need to have additional logging in the `makefile`.
 
 Here’s an example of how you can modify your `makefile` to include self-documentation:
 
@@ -980,17 +1080,18 @@ data/final/AT20G_final.csv: data/processing/AT20G_table.tsv src/clean_tables.py
 # Log target
 log:
     @echo "Workflow executed on $$(date)" >> $(LOGFILE)
-    @echo "Targets to build: AT20G NVSS SUMSS" >> $(LOGFILE)
+    @echo "Targets built: AT20G NVSS SUMSS" >> $(LOGFILE)
 
-# Clean target
+# Clean target and remove old log file
 clean:
     rm -f data/*/AT20G* data/*/NVSS* data/*/SUMSS*
-    @echo "Cleaned all generated files on $$(date)" >> $(LOGFILE)
+    rm $(LOGFILE)
 ```
 
 ### Explanation:
 1. **`LOGFILE` Variable**: A variable `LOGFILE` is defined to store the name of the log file (`workflow_log.txt`).
 2. **Logging Commands**: Each target appends a message to the log file using `@echo`. This includes details about the target and the date/time of execution.
+    - The `@` will cause Make to run the command  but not echo it to the command line, so the logging output is *only* in the log file.
 3. **`log` Target**: A dedicated `log` target is added to record general workflow execution details, such as the date and the targets built.
 4. **Clean Logging**: The `clean` target also logs when files are removed.
 
