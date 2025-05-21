@@ -786,7 +786,7 @@ This will mean that whoever wants to configure the workflow doesn't have edit th
 > > ```output
 > > input_file = data/processing/AT20G_table.tsv
 > > output_file = data/final/AT20G_final.csv
-> > delimiter = \t
+> > survey = AT20G
 > > ```
 > >
 > {: .solution}
