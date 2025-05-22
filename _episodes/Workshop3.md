@@ -125,7 +125,7 @@ Places to look for useful libraries:
 > Let us know an not-yet mentioned library that you often use in your work.
 > Give a 1 sentence description of what the library is designed for.
 >
-> Use the [collaborative notes]({{page.collaborative_notes}}) or the zoom chat to share.
+> Use the [collaborative notes]({{site.ether_pad}}) or the zoom chat to share.
 >
 {: .challenge}
 
@@ -235,44 +235,88 @@ If we were to divide our workflow among these 8 cores we could reduce the total 
 The exact same calculations are being done, but because we have deployed 8x as much resources, we can get the job done in 1/8th of the time.
 This is what we call task based parallelism.
 
-> ## Not everything can be parallelized
-> Some tasks are inherently serial and can't be sped up by applying extra workers.
->
-> Two washing can't wash a single load of clothes in 1/2 the time.
-> This is because the wash/rinse/spin tasks are sequential and rely on each other.
->
-{: .callout}
+A high level approach to using multiple cores is the controller/worker approach.
+The **controller/worker approach** is a method of organizing bash scripts to enable modularity and reusability, which is particularly useful for parallel workflows. Here's how it works and why it's beneficial:
 
-- How to parallelize and existing workflow.
-    - Driver script (xargs) and library (greet.sh)
+1. **Controller Script**
+    - The controller script orchestrates the workflow.
+    - It defines the overall logic, such as which tasks to execute, in what order, and how to distribute them across available resources (e.g., CPU cores or nodes).
+    - Tools like `xargs`, `GNU parallel`, or job schedulers (e.g., SLURM) are often used in the controller script to manage parallel execution.
+
+2. **Worker Script**
+    - The worker script contains reusable functions or commands that perform specific tasks.
+    - These tasks are modular and can be called by the controller script as needed.
+    - The worker script is designed to handle individual units of work, such as processing a single file or performing a single computation.
+
+**How It Works in Parallel Workflows**
+
+1. **Task Definition**:
+   - The worker script defines the task to be performed (e.g., processing a dataset, running a simulation, or generating a report).
+   - Each task is self-contained and can be executed independently.
+
+2. **Task Distribution**:
+   - The controller script reads a list of tasks (e.g., from a file or generated dynamically) and distributes them across available resources.
+   - Tools like `xargs` or `GNU parallel` are used to execute multiple instances of the worker script in parallel.
+
+3. **Parallel Execution**:
+   - Each instance of the worker script runs on a separate core or node, processing its assigned task.
+   - The controller script ensures that tasks are executed efficiently, respecting resource limits (e.g., number of cores).
+
+**Benefits**
+
+1. **Modularity**:
+   - The separation of the controller and worker scripts makes the workflow easier to understand, maintain, and extend.
+   - Changes to the task logic (worker script) do not require modifications to the orchestration logic (controller script).
+
+2. **Reusability**:
+   - The worker script can be reused in different workflows or contexts without modification.
+   - This reduces duplication and promotes consistency.
+
+3. **Scalability**:
+   - The controller script can scale the workflow to utilize available resources effectively, whether on a single machine or a high-performance computing (HPC) cluster.
+
+4. **Ease of Debugging**:
+   - Individual tasks can be tested and debugged independently in the worker script.
+   - The controller script can be tested with mock tasks to ensure proper orchestration.
 
 
-### Job packing with `xargs`
 
-The program `xargs` is standard on most Unix based systems and was created to "build and execute command lines from standard input".
-At its most basic level, `xargs` will accept input from STDIN and convert this into commands which are then executed in the shell.
-`xargs` is able to manage the execution of these sub processes that it spawns and thus can be used to run multiple programs in parallel.
+Let's make an example worker script which simluates doing hard work by doing something simple and then sleeping.
+For this task, our worker emits a pleasent greeting when run.
+The actual greeting is the configurable part of the script (passed as a parameter).
 
-We will again simulate a hard task by doing something simple and then sleeping.
 In this case we have a script called `greet.sh` ([here]({{page.root}}{% link files/greet.sh %})) which is as follows:
-
-> ## `greet.sh`
-> ~~~
-> #! /usr/bin/env bash
-> 
-> echo "$@ to you my friend!"
-> sleep 1
-> ~~~
-> {: .language-bash}
-{: .callout}
-
-If we were to have a file which consisted of greetings (`greetings.txt`, [here]({{page.root}}{% link files/greetings.txt %})), one per line, we could use xargs to run our above script with the greeting as an argument:
-
+`greet.sh`
 ```bash
-xargs -a greetings.txt -L 1 -exec ./greet.sh
+#! /usr/bin/env bash
+
+echo "$@ to you my friend!"
+sleep 1
 ```
 
-The `-L 1` instructs xargs to pass one line at a time as arguments to our `-exec` command, and `-a` indicates the input data file.
+We can then take a list of all the work that needs to be done and place it into a file.
+In this case the "list of work" is a line-by-line set of parameters that will be passed to the worker script: (`greetings.txt`, [here]({{page.root}}{% link files/greetings.txt %})).
+
+Our controller script now has the task of looping through all the entries in the `greetings.txt` file and sending them to the `greet.sh` worker script.
+The program `xargs` is standard on most Unix based systems and was created to "build and execute command lines from standard input".
+At its most basic level, `xargs` will accept input from STDIN and convert this into commands which are then executed in the shell.
+
+`controller.sh`
+```bash
+#!/usr/bin/env bash
+# A controller script to run greetings in parallel
+
+# Input file containing names
+INPUT_FILE="greetings.txt"
+
+# Run the worker script in serial using a loop
+xargs -a "$INPUT_FILE" -L 1  ./greet.sh
+```
+
+Here the arguments to `xargs` are:
+- `-a` read input from the given file
+- `-L 1` read one line from the file as a single input (if multiple words on the line, then pass them *all* to our command)
+
 The above would eventually output the following:
 
 ```output
@@ -303,11 +347,23 @@ The code is being executed on a single CPU core sequentially.
 
 ![SerialHello]({{page.root}}{% link fig/SerialHello.png %})
 
-If we want to work with 8 tasks in parallel we can do so using the `-P 8` argument to xargs:
 
+`xargs` is able to manage the execution of these sub processes that it spawns and thus can be used to run multiple programs in parallel.
+Thus, we can modify our controller script as follows:
+
+`controller.sh`
 ```bash
-xargs -a greetings.txt -L 1 -P 8 -exec ./greet.sh
+#!/usr/bin/env bash
+# A controller script to run greetings in parallel
+
+# Input file containing names
+INPUT_FILE="greetings.txt"
+
+# Run the worker script in parallel using xargs
+xargs -a "$INPUT_FILE" -L 1 -P 8 ./greet.sh
 ```
+
+Where the option `-P 8` instructs `xargs` to run up to 8 instances of our script at once.
 
 You'll see that we get the same output as before (maybe in a different order) but that it occurs in batches of 8, with an approximately 1 second pause between them.
 What is happening now is that the waiting time is happening in parallel rather than in serial.
@@ -315,9 +371,16 @@ If we replaced the `sleep 1` command with some actual work that needs to be done
 
 ![ParallelHello]({{page.root}}{% link fig/ParallelHello.png %})
 
-By using `xargs` we can create a single job file that will spawn multiple tasks (up to some maximum) that will run concurrently.
+By using a controller/worker approach, along with `xargs`, we can create a single job file that will spawn multiple tasks (up to some maximum) that will run concurrently.
 Moreover, if we have more tasks to complete than CPU cores available, `xargs` will wait for a task to complete before starting another.
 
+> ## Not everything can be parallelized
+> Some tasks are inherently serial and can't be sped up by applying extra workers.
+>
+> Two washing machines can't wash a single load of clothes in 1/2 the time.
+> This is because the wash/rinse/spin tasks are sequential and rely on each other.
+>
+{: .callout}
 
 ## Planning your workflow for speed
 - Planning a workflow
