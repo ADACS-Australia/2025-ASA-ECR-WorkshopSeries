@@ -82,22 +82,121 @@ We are going to not engage in 1 because there is nothing to teach.
 We will not exlpore 4 except to say that [`make`](https://www.gnu.org/software/make/manual/make.html) and [`NextFlow`](https://www.nextflow.io/) both have a caching mechanism that you can use without having to write any extra code.
 The focus of today's workshop will be on 2 and 3 - making things faster and doing more work at once.
 
-## Optimising code that you write
+## Writing performant code
 
-- Optimisation notes, no practice, just notes
-    - Use existing libraries, numpy etc are v.fast and you unlikely to beat them.
-    - Using libraries gives the best results when you use their data types
-        - np.ndarray
-        - pd.dataframe
-        - astropy.source
-    - Example of numpy vectorization.
-    - Note other examples 
-        - operating on columns of a pandas data frame
-        - cross matching between astropy source lists
-    - No other optimisation, just this advice. Do this and then don't stress about profiling and optimisation.
+Code optimization is the process of improving the efficiency of your code to reduce execution time, memory usage, or other resource consumption.
+However, optimization should be approached carefully to avoid unnecessary complexity or premature efforts.
+Below are key considerations and strategies for optimizing code (for speed):
+
+1. **When to Optimize**
+    - **Measure First**: Use profiling tools (e.g., `cProfile`, `line_profiler`) to identify bottlenecks in your code.
+    - **Set Goals**: Define what "good enough" performance looks like for your use case.
+    - **Avoid Premature Optimization**: Focus on correctness and clarity first; optimize only when necessary.
+2. **General Strategies**
+    - **Use Efficient Algorithms**: Choose algorithms with better time and space complexity for your problem.
+    - **Leverage Existing Libraries**: Libraries like `numpy`, `pandas`, and `scipy` are highly optimized for performance.
+    - **Minimize Redundant Computations**: Cache results of expensive operations if they are reused (e.g., memoization).
+3. **Python-Specific Tips**
+    - **Vectorization**: Replace loops with vectorized operations using libraries like `numpy`.
+    - **Data Structures**: Use appropriate data structures (e.g., `set` for membership checks, `deque` for queues).
+    - **Avoid Global Variables**: Accessing global variables can slow down your code due to namespace lookups.
+4. **Iterative Optimization**
+    - **Test After Each Change**: Ensure that optimizations do not introduce bugs or regressions.
+    - **Benchmark**: Use tools like `timeit` to measure the impact of your changes.
+
+In this workshop we aren't going to do any optimisation, for that you can check out our other lessones [here](https://adacs-australia.github.io/2023_ASA_ECR_Python_Workshop/Optimization/index.html) or [here](https://adacs-australia.github.io/2023-03-20-Coding-Best-Practices-Workshop/Optimization/index.html).
+Instead, we will talk about how you can write code that is likely be to be "pretty fast" or "good enough" to start with - performant code.
+
+### Don't repeat others
+
+The first thing to note is that other people have been writing code for a lot longer than you have and there are some true experts out there that spend a lot of time making their code as fast as possible.
+Rather than trying to compete with them, or reproduce their efforts, you should look to build upon their success.
+So before you start to code up some functions, workflows, or libraries, have a look online and see if you can find some existing libraries.
+Some excellent examples that most people likely alreay use are `numpy`, `scipy`, `pandas`, and `astropy`.
+These libraries are developed by teams of folks who pay close attention to getting the right answer, in the shortest time possible, and usually without exploding your RAM.
+
+Places to look for useful libraries:
+- Your peers and collaborators - ask what other people are using (bonus, they also be a good source of help when things go bad),
+- [PyPI (Python Package Index)](https://pypi.org/) - the go-to source for Python packages (both good and bad),
+- [GitHub](https://github.com), as above, but not specific to python, probably a large fraction of not-great things,
+- The acknowledgements section of papers you read - some kind souls mention/cite their code.
+
+> ## What are some of your go-to libraries?
+> Let us know an not-yet mentioned library that you often use in your work.
+> Give a 1 sentence description of what the library is designed for.
+>
+> Use the [collaborative notes]({{page.collaborative_notes}}) or the zoom chat to share.
+>
+{: .challenge}
 
 
-If you are interested in learning more about code optimisation then you can check out our other lessones [here](https://adacs-australia.github.io/2023_ASA_ECR_Python_Workshop/Optimization/index.html) or [here](https://adacs-australia.github.io/2023-03-20-Coding-Best-Practices-Workshop/Optimization/index.html).
+Using existing libraries means that you'll be importing functions, but also data structures.
+It is good practice to use the recommended data structures with the given library functions as this reduces the amount of type casting and conversion work that needs to be done.
+Let's explore how this would work using an example from `numpy`.
+
+For a basic example we'll consider performing an operation on two sets of data.
+Supposed we have two lists of integers (A and B), and we want to add them together (C = A + B).
+
+> ## Add two python lists
+> Using `ipython` do the following and observe the output:
+> ~~~
+> A_list=list(range(10_000))
+> B_list=list(range(10_000))
+> 
+> %timeit C_list = [ a+b for a,b in zip(A_list,B_list)]
+> ~~~
+> {: .language-python}
+> > ## Output
+> > Depending on the speed of your computer you'll get something like this:
+> > ~~~
+> > 295 μs ± 26.5 μs per loop (mean ± std. dev. of 7 runs, 1,000 loops each)
+> > ~~~
+> > {: .output}
+> {: .solution}
+{: .challenge}
+
+Now let us use the numpy data types.
+These are numpy arrays rather than python lists.
+
+> ## Add two numpy arrays
+> Again using `ipython`, do the following and observe the output:
+> ~~~
+> # assuming the same session as before
+> import numpy as np
+> A = np.array(A_list)
+> B = np.array(B_list)
+> %timeit C = A+B
+> ~~~
+> {: .language-python}
+> > ## Output
+> > Depending on the speed of your computer you'll get something like this:
+> > ~~~
+> > 2.01 μs ± 71.7 ns per loop (mean ± std. dev. of 7 runs, 100,000 loops each)
+> > ~~~
+> > {: .output}
+> > ![MindBlown](https://www.reactiongifs.us/wp-content/uploads/2017/07/Mind-Blow-2.gif)
+> {: .solution}
+{: .challenge}
+
+So we have a speed up of about 100x (for that one operation), just by using `numpy` data types and leveraging the fast algebra that `numpy` provides.
+`numpy` contains more than just basic math functions.
+In fact many of the linear algebra operations that you would want to perform on arrays, vectors, or matrices (in the `numpy.linalg` module), call on powerful system level libraries such as OpenBLAS, MKL, and ATLAS.
+These libraries, in turn, are multi-threaded or multi-core enabled, so in many cases you'll also be able to make use of multiple cores, without having to explicitly deal with the multiprocessing library, just by using `numpy` or `scipy` functions.
+Some particularly useful examples are the `scipy.optimize` and `scipy.fft` modules.
+
+
+Other examples of this vectorised approach include:
+- `scipy`
+    - Because it's a wrapper around `numpy` in many cases.
+- `pandas`
+    - Operations on columns are vectorised.
+- `astropy`
+    - Instead of an array of `SkyCoord` objects, create a single `SkyCoord` with arrays of coordinates. Operations on this object will be vectorised.
+    - With two `SkyCoord` objects (catalogues) you can run a crossmatch between them. Astropy will do the matching using an algorith much smarter than your "minimum of the all to all comparison".
+
+
+The main lesson here is that Python is slow but easy to code, and C is fast but hard(er) to code, but by using libraries such as `numpy` you can start to get the benefit of both worlds - easy to code, fast to use.
+So, wherever possible, use already built libraries and avoid re-implementing things yourself.
 
 ## Scaling Up Your Resources
 
