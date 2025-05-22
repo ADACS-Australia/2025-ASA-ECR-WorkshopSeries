@@ -80,7 +80,23 @@ In general you have the following options available to you:
 
 We are going to not engage in 1 because there is nothing to teach.
 We will not exlpore 4 except to say that [`make`](https://www.gnu.org/software/make/manual/make.html) and [`NextFlow`](https://www.nextflow.io/) both have a caching mechanism that you can use without having to write any extra code.
-The focus of today's workshop will be on some of 2 (using faster comptuers), and all of 3.
+The focus of today's workshop will be on 2 and 3 - making things faster and doing more work at once.
+
+## Optimising code that you write
+
+- Optimisation notes, no practice, just notes
+    - Use existing libraries, numpy etc are v.fast and you unlikely to beat them.
+    - Using libraries gives the best results when you use their data types
+        - np.ndarray
+        - pd.dataframe
+        - astropy.source
+    - Example of numpy vectorization.
+    - Note other examples 
+        - operating on columns of a pandas data frame
+        - cross matching between astropy source lists
+    - No other optimisation, just this advice. Do this and then don't stress about profiling and optimisation.
+
+
 If you are interested in learning more about code optimisation then you can check out our other lessones [here](https://adacs-australia.github.io/2023_ASA_ECR_Python_Workshop/Optimization/index.html) or [here](https://adacs-australia.github.io/2023-03-20-Coding-Best-Practices-Workshop/Optimization/index.html).
 
 ## Scaling Up Your Resources
@@ -128,7 +144,8 @@ This is what we call task based parallelism.
 >
 {: .callout}
 
-
+- How to parallelize and existing workflow.
+    - Driver script (xargs) and library (greet.sh)
 
 
 ### Job packing with `xargs`
@@ -203,20 +220,38 @@ By using `xargs` we can create a single job file that will spawn multiple tasks 
 Moreover, if we have more tasks to complete than CPU cores available, `xargs` will wait for a task to complete before starting another.
 
 
+## Planning your workflow for speed
+- Planning a workflow
+    - Map tasks
+    - Map all dependencies
+    - map-reduce
+    - Note parallel execution opportunities
+    - Ahmdahls' law again
+
+
 ### Amdahl's Law
 Identify which parts of your code / workflow have to be done in serial, and which parts can be done in parallel.
 Amdahl's law gives you an estimate of the speed up factor.
 
 ![Amdahls Law]({{page.root}}{% link fig/AmdahlFormula.png %})
 
-## High-Performance Computing
 
-Clusters, cloud computing, best practices.
+## Using multiple cores the hard(er) way
 
-## Hands-On Resource Management
 
-Planning and simulating distributed computing tasks.
+- Concepts of shared memory vs distributed memory systems
+    - multiprocessing in python
+    - shared memory in python
+    - MPI (hard to do examples since needs library)
+    - hybrid workflows
 
-## Discussion & Problem Solving
 
-Addressing research bottlenecks.
+## Using many-many-many more cores (HPC)
+- How to make use of HPC for faster results
+    - HPC infrastructure and scheduling
+    - Using a "full node" to the best of your ability
+    - Array jobs
+    - Hybrid arrays jobs + job packing (eg xargs)
+
+
+## Further discussion points
