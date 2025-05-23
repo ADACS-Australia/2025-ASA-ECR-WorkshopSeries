@@ -17,12 +17,15 @@ keypoints:
 ---
 
 ## Overview
-
+When you have offloaded much of your work to a computer your productivity becomes limited by computing resources.
+A common misconception is that faster code requires a deep dive into the world of code optimization.
+This is, however, just a misconception: there are many ways to speed up your research that don’t require you to rewrite your code at all (or much).
 
 
 ## Today's focus
 Today we will consider an example task that is integral to our research work, but is taking a long time to complete.
 The completion of this task is a bottleneck for progress.
+We will look at how to make use of more resources on our own computer in multiple different ways, and then talk about what it takes to use HPC resources.
 
 
 ## Example workflow
