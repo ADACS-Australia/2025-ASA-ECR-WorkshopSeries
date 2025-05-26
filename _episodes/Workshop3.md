@@ -18,7 +18,7 @@ keypoints:
 
 ## Overview
 When you have offloaded much of your work to a computer your productivity becomes limited by computing resources.
-A common misconception is that faster code requires a deep dive into the world of code optimization.
+A common misconception is that faster code requires a deep dive into the world of code *optimization*.
 This is, however, just a misconception: there are many ways to speed up your research that don’t require you to rewrite your code at all (or much).
 
 
@@ -78,7 +78,7 @@ Some common patterns that you will see in workflows are:
     - A combination of the above, where the tasks in the "many" section are independent of each other.
     - These are excellent opportunities for parallelizing part of your workflow.
 - **many-to-one-to-many**
-    - The inverse of the above, where as single task required many and produces many outputs.
+    - The inverse of the above, where as single task requires many inputs and produces many outputs.
     - This can be a sign of a bottle-neck in your workflow.
 
 
@@ -88,19 +88,11 @@ Amdahl's law gives you an estimate (upper limit) of the speed up factor.
 
 ![Amdahls Law]({{page.root}}{% link fig/AmdahlFormula.png %})
 
-In general you won't achieve this factor, because there are always overheads associated with parallel execution (such as communication, or resource contention).
-Therefore, you should think about wether it's wroth investing the time.
+In general you won't achieve this factor, because there are always overheads associated with parallel execution (such as communication, or resource contention), but it is often not hard to come close to this factor.
+Therefore, you should think about wether it's worth investing the time.
 
 
 ## Making things go faster
-
-When most people want to make their code or workflow faster, they think of optimization.
-Specifically, code optimization.
-
-Before we engage in any kind of optimization, there are a few things we should do first:
-- Understand what the problem is (or rather, confirm a problem exists)
-- Measure the current state of things (benchmark + first profile)
-- Have a target in mind for what is "good enough"
 
 When thinking about the problem, remember that your code doesn't run in isolation.
 It runs as part of a larger workflow, that includes other pieces of code as well as non-automated things like researcher thinking time.
@@ -114,9 +106,9 @@ If you have other useful work that can be done while your code runs, then do tha
 - You are the slowest component.
 
 **Therefore**: 
-1. Focus on reducing **your** active interaction time,
-2. *then* on your total wait time, 
-3. *then* on cpu time.
+1. Focus on reducing **your** active interaction time, (automation)
+2. *then* on your total wait time, (using more resources)
+3. *then* on cpu time (optimization).
 
 A reason to confirm that we *need* to optimize our code is that we want to avoid premature optimization:
 [![ObligatoryXKCD](https://imgs.xkcd.com/comics/is_it_worth_the_time.png)](https://xkcd.com/1205/)
@@ -262,6 +254,7 @@ In fact, a new desktop computer may have 5GHz clock speed, where as an HPC facil
 
 However, if your task is running slow because it is being limited by disk read/writes, then swapping a spinning disk HDD for a SSD or nVME can make this go faster.
 Similarly if your task is running slow because it uses all your RAM, and has to start using disk storage instead ([swapping or paging](https://en.wikipedia.org/wiki/Memory_paging)), then expanding the RAM could make things faster.
+This is where HPC really start to shine, because they often provide large amount of RAM per compute node, and will have various storage solutions that are optimized for read/write speed or for long term storage.
 
 ### Using more cores
 
@@ -272,11 +265,11 @@ The solution is to simply run different tasks on different cores.
 
 If we have even a modest desktop computer we could have 8 cores available to us.
 If we were to divide our workflow among these 8 cores we could reduce the total execution time from 100 minutes, down to just 12.5 minutes.
-The exact same calculations are being done, but because we have deployed 8x as much resources, we can get the job done in 1/8th of the time.
+The exact same calculations are being done (e.g. there is no optimization), but because we have deployed 8x as much resources, we can get the job done in 1/8th of the time.
 This is what we call task based parallelism.
 
 A high level approach to using multiple cores is the controller/worker approach.
-The **controller/worker approach** is a method of organizing bash scripts to enable modularity and reusability, which is particularly useful for parallel workflows. Here's how it works and why it's beneficial:
+The **controller/worker approach** is a method of organizing scripts to enable modularity and reusability, which is particularly useful for parallel workflows. Here's how it works and why it's beneficial:
 
 1. **Controller Script**
     - The controller script orchestrates the workflow.
@@ -287,6 +280,7 @@ The **controller/worker approach** is a method of organizing bash scripts to ena
     - The worker script contains reusable functions or commands that perform specific tasks.
     - These tasks are modular and can be called by the controller script as needed.
     - The worker script is designed to handle individual units of work, such as processing a single file or performing a single computation.
+    - The worker script can be written in any language, so long as it has a command line interface that the controller script can call.
 
 **How It Works in Parallel Workflows**
 
