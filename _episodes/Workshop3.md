@@ -248,7 +248,7 @@ Modern CPUs now often have multiple cores, allowing them to perform many tasks s
 While individual cores may not be significantly faster than those from the early 2000s, the ability to run multiple processes in parallel has led to substantial performance improvements for workloads that can take advantage of parallelism.
 This shift has made understanding and utilizing parallel computing essential for researchers and developers.
 Unless you are using a truly ancient piece of hardware, buying a "faster" computer isn't going to make your single CPU task take less time to run.
-In fact, a new desktop computer may have 5GHz clock speed, where as an HPC facility may have CPUs with only a 2.5GHz clock speed, so running your single core job on an HCP may actually take **longer**.
+In fact, a new desktop computer may have 5GHz clock speed, where as an HPC facility may have CPUs with only a 2.5GHz clock speed, so running your single core job on an HPC may actually take **longer**.
 (This is because HPC facilities provide many more CPU cores than your desktop: 64-128 vs 8-16).
 
 
