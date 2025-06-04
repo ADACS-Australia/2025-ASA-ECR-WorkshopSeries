@@ -3,20 +3,20 @@ VERSION:2.0
 PRODID:-//ADACS//NONSGML v1.0//EN
 
 BEGIN:VEVENT
-UID:automate-boring-bits-w4p1v1
-DTSTAMP:20250507T040000Z
-DTSTART:20250610T050000Z
-DTEND:20250610T070000Z
+UID:automate-boring-bits-w4p1v2
+DTSTAMP:20250603T040000Z
+DTSTART:20250616T050000Z
+DTEND:20250616T070000Z
 SUMMARY:HOWTO: Leverage GitHub for research
 DESCRIPTION: Part 1 - Primary Instruction\nhttps://adacs-australia.github.io/2025-ASA-ECR-WorkshopSeries/
 LOCATION:https://swinburne.zoom.us/j/82087463800
 END:VEVENT
 
 BEGIN:VEVENT
-UID:automate-boring-bits-w4p2v1
-DTSTAMP:20250507T040000Z
-DTSTART:20250612T050000Z
-DTEND:20250612T070000Z
+UID:automate-boring-bits-w4p2v2
+DTSTAMP:20250603T040000Z
+DTSTART:20250619T050000Z
+DTEND:20250619T070000Z
 SUMMARY:HOWTO: Leverage GitHub for research
 DESCRIPTION: Part 2 - Follow up discussion and advanced topics\nhttps://adacs-australia.github.io/2025-ASA-ECR-WorkshopSeries/
 LOCATION:https://swinburne.zoom.us/j/82087463800
