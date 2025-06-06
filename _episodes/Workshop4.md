@@ -38,24 +38,6 @@ After the fact we tell a story that follows a clear and logical path, but this l
 In previous lessons we learned about how we can [automate our research work]({{page.root}}{% link _episodes/Workshop1.md %}), how we can [reuse previous work]({{page.root}}{% link _episodes/Workshop2.md %}), and how to [work more efficiently]({{page.root}}{% link _episodes/Workshop3.md %}).
 In this lesson we are going to learn how we can use GitHub throughout the lifecycle of our project.
 
-# Things to cover
-
-- Project management tools
-    - Kanban / projects
-    - Milestones
-    - Issues
-- Communication
-    - Issues / conversations
-    - Markdown
-- Project continuity
-- Hosting a website
-- Archiving citable code and data
-    - How to use Zenodo to generate a DoI for a release
-- Collaborative works
-- Peer review
-- Automation
-- Promotion
-    - Personal page README.md
 
 ## Workshop Outline
 
@@ -138,6 +120,12 @@ Our first round of exercises will focus on these four features:
 > Your new "BirdCount" repository is now ready for you to start adding files, issues, and collaborators!
 {: .challenge}
 
+> ## Markdown
+> Desptie the name, [Markdown](https://en.wikipedia.org/wiki/Markdown) is actually a mark*up* language, which was created to be easy for humans to read and write (as compared to HTML for example).
+> GitHub recognizes [markdown](https://docs.github.com/en/get-started/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax) formatting, and will render the content of `.md` files accordingly.
+>
+{: .callout}
+
 
 ### The issue life-cycle
 
@@ -165,9 +153,9 @@ Our first issue is therefore to do some project setup.
 > 2. Click the **Issues** tab, then select **New Issue**.
 > 3. Title the issue: `Project Setup: Documentation, License, and Wiki`
 > 4. In the description, add:
->     - [ ] Update the `README.md` with project details.
->     - [ ] Add a license file to the repository.
->     - [ ] Create a front page for the project wiki.
+>     - ```- [ ] Update the `README.md` with project details.```
+>     - ```- [ ] Add a license file to the repository.```
+>     - ```- [ ] Create a front page for the project wiki.```
 > 5. Assign the issue to yourself.
 > 6. Add the **Documentation** label.
 > 7. Click **Create** to save.
@@ -589,9 +577,34 @@ This enhances the visibility and accessibility of your research, making it easie
 >
 {: .challenge}
 
+## Advanced GitHub Topics
+
+### Automating Tasks with GitHub Actions
+
+GitHub **Actions** is a powerful automation tool that can significantly enhance research workflows by enabling continuous integration and continuous deployment (CI/CD) directly within your repository.
+For research projects, GitHub Actions can automatically build and deploy documentation whenever changes are pushed, ensuring that project information is always up to date.
+It can also run tests on code or data analysis scripts, catching errors early and maintaining reproducibility.
+Researchers can use Actions to automate data validation, generate reports, or even publish results to external platforms.
+By streamlining repetitive tasks and enforcing quality checks, GitHub Actions helps maintain consistency, saves time, and allows researchers to focus more on their scientific work.
+
+
+### Archiving and Citing Your Research with Zenodo
+
+To make your research outputs citable and ensure long-term preservation, you can archive your GitHub repository with [Zenodo](https://zenodo.org/), a research data repository developed by CERN.
+Zenodo integrates directly with GitHub, allowing you to automatically archive releases of your repository and assign each one a Digital Object Identifier (DOI).
+
+To set this up, log in to Zenodo using your GitHub account and authorize Zenodo to access your repositories.
+In Zenodo, navigate to the "GitHub" section under your account settings and enable the repositories you want to archive.
+Once enabled, every time you create a new release on GitHub (using the "Releases" tab and clicking "Draft a new release"), Zenodo will archive a snapshot of your repository and mint a unique DOI for that version.
+This DOI can be included in your papers, documentation, or project website, making your code and data easily citable and discoverable.
+Zenodo also provides a recommended citation format and ensures your archived materials remain accessible even if the original repository changes or is deleted.
+
+
 ## Wrap up
 
--summary-
+This lesson introduces researchers to the core features of GitHub and demonstrates how they can be leveraged to enhance research productivity, collaboration, and project management. It walks through the entire project lifecycle using a practical example—setting up a "BirdCount" repository—covering essential tasks such as creating repositories, managing issues and milestones, collaborating through branches and pull requests, and documenting work with wikis and project websites. The lesson also highlights the importance of maintaining clear documentation, tracking progress, and promoting both individual and project profiles using GitHub Pages and profile READMEs.
+
+Beyond the basics, the lesson explores advanced topics like automating workflows with GitHub Actions and archiving research outputs with Zenodo for citation and long-term preservation. By following the hands-on exercises and best practices outlined, researchers can streamline their workflows, ensure reproducibility, and increase the visibility and impact of their work within the scientific community.
 
 Please fill in the [Post-workshop Survey]({{ site.post_survey }}).
 
