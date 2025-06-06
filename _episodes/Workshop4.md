@@ -424,6 +424,10 @@ This structure helps research teams prioritize work, delegate responsibilities, 
 > 
 > Your milestone now tracks all these foundational tasks, helping you monitor progress as you move the project forward.
 >
+> > ## Example
+> > ![Milestones]({{page.root}}{% link fig/Milestones.png %})
+> {: .solution}
+>
 {: .challenge}
 
 
