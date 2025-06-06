@@ -258,7 +258,7 @@ We have made some progress towards our goal of project setup so we should update
 {: .challenge}
 
 The next item on our list is to create a License for our repository.
-This gives people the right expectations for how they can use/resuse our work.
+This gives people the right expectations for how they can use/reuse our work.
 
 
 > ## Add a License to Your Repository
@@ -382,13 +382,21 @@ The changes are addressed by making additional commits to the branch which is be
 If we have reviewers or actions associated with the PR, then they will have another review cycle.
 Once all changes are resolved and the reviewers are happy, we can merge the changes into the main branch.
 
-Press merge, click the delete branch option when it becomes available, since that issue has been closed.
+> ## Merge the Pull Request
+>
+> 1. Go to your "BirdCount" repository on GitHub.
+> 2. Click the **Pull requests** tab and open the pull request you just created for project setup.
+> 3. Review the changes and ensure all tasks are complete.
+> 4. Click the **Merge pull request** button.
+> 5. Confirm the merge when prompted.
+> 6. (Optional) Click **Delete branch** to remove the feature branch after merging.
+> 7. Go to **issues** and confirm that the linked issue has been set to closed, close it if not.
+>
+{: .challenge}
 
-Go to `issues` and confirm that the issue that was linked to the PR has been set to closed.
 
 
-
-## Project management tools
+## Project Management Tools
 
 GitHub **milestones** and **issues** work together as powerful project management tools, especially for research projects that require clear organization and progress tracking.
 Issues are used to document specific tasks, bugs, questions, or features that need attention.
@@ -397,6 +405,26 @@ Milestones, on the other hand, represent larger goals or phases of the project�
 By grouping related issues under a milestone, teams can visualize progress toward these broader objectives.
 As issues are resolved and closed, the milestone’s completion percentage increases, providing a clear overview of how close the team is to reaching its goal.
 This structure helps research teams prioritize work, delegate responsibilities, and maintain transparency, ensuring that everyone stays aligned and project deadlines are met efficiently.
+
+> ## Organize Tasks with Milestones and Issues
+>
+> 1. In your "BirdCount" repository, click the **Issues** tab.
+> 2. Click on **Milestones** (usually near the top right), then select **New milestone**.
+> 3. Name the milestone `Project Initiation` and add a short description, such as "Initial setup tasks to get the project started."
+> 4. (Optional) Set a due date for the milestone.
+> 5. Click **Create milestone**.
+> 6. Go back to your issues, and add our first issue to this milestone.
+> 7. Create a new issue titled `Define Project Structure`.
+> 8. In the issue description, outline what needs to be done (e.g., "Document planned file/folder structure").
+> 9. Assign this issue to the `Project Initiation` milestone.
+> 10. Repeat steps 7–9 to add a few more issues, such as:
+>     - `Identify contributors`
+>     - `Draft project timeline`
+>     - `Determine data storage formats`
+> 
+> Your milestone now tracks all these foundational tasks, helping you monitor progress as you move the project forward.
+>
+{: .challenge}
 
 
 
@@ -421,7 +449,7 @@ By creating a `README.md` file in a repository that is the same as your username
 >     - Links to your website, social media, or other relevant profiles
 >     - Fun facts, images, or emojis to personalize your page
 > 5. Commit your changes. Your profile README will now appear on your GitHub profile page.
->
+> 6. Link your profile in the [collaborative document]({{ site.ether_pad }}).
 {: .challenge}
 
 The second the ability to host a website as part of your repository using GitHub **Pages**.
@@ -443,8 +471,6 @@ This enhances the visibility and accessibility of your research, making it easie
 > 5. Commit your changes and wait a few minutes for your site to be published.
 > 6. Visit the provided URL to see your project’s front page live!
 >
-> _Tip: Use Markdown formatting to make your page visually appealing. You can update this page anytime as your project evolves._
-> 
 > > ## Example `index.html` for the Bird Count project
 > > ```html
 > > <!DOCTYPE html>
@@ -559,6 +585,11 @@ This enhances the visibility and accessibility of your research, making it easie
 >
 {: .challenge}
 
+## Wrap up
+
+-summary-
+
+Please fill in the [Post-workshop Survey]({{ site.post_survey }}).
 
 <!-- 
 ## Bibliography
