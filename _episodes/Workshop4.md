@@ -18,7 +18,12 @@ keypoints:
 ---
 
 
-## A project life cycle includes
+## Research Project Life Cycle
+
+Research is often not a straight shot from idea to publication, but a series of tangents, back-tracks, do-overs, and dead-ends, that eventually land you in a new and interesting place.
+After the fact we tell a story that follows a clear and logical path, but this less about documenting the actual work, and more about having a compelling narrative.
+A research project typically involves the following components, though not always in this order:
+
 - developing a hypothesis
 - review of literature
 - sourcing data
@@ -32,49 +37,25 @@ keypoints:
 - project management
 - working collaboratively
 
-Research is often not a straight shot from idea to publication, but a series of tangents, back-tracks, do-overs, and dead-ends, that eventually land you in a new and interesting place.
-After the fact we tell a story that follows a clear and logical path, but this less about documenting the actual work, and more about having a compelling narrative.
-
 In previous lessons we learned about how we can [automate our research work]({{page.root}}{% link _episodes/Workshop1.md %}), how we can [reuse previous work]({{page.root}}{% link _episodes/Workshop2.md %}), and how to [work more efficiently]({{page.root}}{% link _episodes/Workshop3.md %}).
 In this lesson we are going to learn how we can use GitHub throughout the lifecycle of our project.
 
 
-## Workshop Outline
-
-### 1. Introduction to GitHub for Research Promotion
-- **Overview:** Why and how researchers use GitHub to showcase their work.
-- **Exercise:** Create or update your GitHub personal profile and set up a personal website using GitHub Pages.
-
-### 2. Project Management with Issues and Milestones
-- **Overview:** Organizing research projects using issues, labels, milestones, and project boards.
-- **Exercise:** Create a new repository, add issues for project tasks, assign labels, and set up milestones to track progress.
-
-### 3. Automating Workflows with GitHub Actions
-- **Overview:** Introduction to GitHub Actions for continuous integration, testing, and document rendering.
-- **Exercise:** Add a simple GitHub Actions workflow to your repository to automatically run tests or build documentation on each push.
-
-### 4. Documentation with GitHub Wikis
-- **Overview:** Using the GitHub Wiki feature to create and maintain project documentation.
-- **Exercise:** Enable the wiki for your repository and add pages for project overview, installation instructions, and usage examples.
-
-
-
-
-[GitHub education](https://github.com/education) provides most pro features for free if you have an educational institution email address (eg <uni>.edu.au).
-You need to verify you are a teacher or student each year to renew your education bonus.
-Features include:
-- Unlimited free private repositories
-- GitHub Copilot Pro (integrates into VSCode)
-- GitHub codespaces (develop and run your code on GitHub resources)
-
-
-
+> ## GitHub Education
+> [GitHub education](https://github.com/education) provides most pro features for free if you have an educational institution email address (eg <user>@<uni>.edu.au).
+> You need to verify you are a teacher or student each year to renew your education bonus.
+> Features include:
+> - Unlimited free private repositories
+> - GitHub Copilot Pro (integrates into VSCode)
+> - GitHub codespaces (develop and run your code on GitHub resources)
+>
+{: .callout}
 
 ## Today's Focus
 Today we will be exploring many of the features of GitHub that are useful for research projects and scientific collaboration.
 We will be using an example project to explore these features: We are doing a survey of birds in our local area.
-We are not going to focus on the details of how git works, for that you can see [other lesson]().
-Similarly, we are not going to focus on writing code as that has been covered in many other lessons [eg.]().
+We are not going to focus on the details of how git works, for that you can see [this carpentries lesson](https://swcarpentry.github.io/python-novice-inflammation/).
+Similarly, we are not going to focus on writing code as that has been covered in many other lessons.
 
 
 By doing all our work in the open on github it is very easy for us to collaborate with others.
