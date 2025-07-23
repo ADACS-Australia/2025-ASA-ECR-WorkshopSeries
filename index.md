@@ -4,7 +4,7 @@ layout: workshop      # DON'T CHANGE THIS.
 # online workshop) are available at
 # https://carpentries.github.io/workshop-template/customization/index.html
 venue: "Curtin University"        # brief name of the institution that hosts the workshop without address (e.g., "Euphoric State University")
-address: "https://swinburne.zoom.us/j/82087463800"      # full street address of workshop (e.g., "Room A, 123 Forth Street, Blimingen, Euphoria"), videoconferencing URL, or 'online'
+address: "Online"      # full street address of workshop (e.g., "Room A, 123 Forth Street, Blimingen, Euphoria"), videoconferencing URL, or 'online'
 country: "au"      # lowercase two-letter ISO country code such as "fr" (see https://en.wikipedia.org/wiki/ISO_3166-1#Current_codes) for the institution that hosts the workshop
 language: "en"     # lowercase two-letter ISO language code such as "fr" (see https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) for the workshop
 latitude: "-32.006195"        # decimal latitude of workshop venue (use https://www.latlong.net/)
@@ -21,44 +21,21 @@ eventbrite:           # optional: alphanumeric key for Eventbrite registration, 
 # math: True
 ---
 
-{% comment %}
-HEADER
-
-Edit the values in the block above to be appropriate for your workshop.
-If the value is not 'true', 'false', 'null', or a number, please use
-double quotation marks around the value, unless specified otherwise.
-And run 'make workshop-check' *before* committing to make sure that changes are good.
-{% endcomment %}
-
-{% comment %}
-EVENTBRITE
-
-This block includes the Eventbrite registration widget if
-'eventbrite' has been set in the header.  You can delete it if you
-are not using Eventbrite, or leave it in, since it will not be
-displayed if the 'eventbrite' field in the header is not set.
-{% endcomment %}
-{% if page.eventbrite %}
-<strong>Some adblockers block the registration window. If you do not see the
-  registration box below, please check your adblocker settings.</strong>
-<iframe
-  src="https://www.eventbrite.com/tickets-external?eid={{page.eventbrite}}&ref=etckt"
-  frameborder="0"
-  width="100%"
-  height="280px"
-  scrolling="auto">
-</iframe>
-{% endif %}
-
-
 <h2 id="general">General Information</h2>
 
-{% comment %}
-INTRODUCTION
+This workshop series was created as a collaboration between Astronomy Data And Computing Services ([ADACS](adacs.org.au)), and the Early Career Researcher ([ECR](https://asa-ecr.org/)) chapter of the Astronomical Society of Australia (ASA).
+The goal of the workshop is to provide Students and ECRs with training that will boost their research productivity - training that is often not part of a formal under- or post-graduate degree program.
+The workshop was presented online as a HOWTO series.
+Each of the workshops in the series were recorded and are available to view via YouTube with the links below.
+The workshop content itself is still being hosted on github for anyone who would like to learn at their own pace.
 
-Edit the general explanatory paragraph below if you want to change
-the pitch.
-{% endcomment %}
+If you like what you see here, and would like to have a workshop developed and delivered for your research group, collaboration, or as part of a conference that you are organising please contact ADACS using [this form](https://adacs.org.au/contact-us/), or via [contact@adacs.org.au](mailto:contact@adacs.org.au).
+
+This workshop was run between {{page.humandate}} and the page has now been updated as the workshop is closed and archived.
+
+
+
+{% comment %}
 
 <p>
 <strong><a href="https://carpentries.org">The Carpentries</a></strong> project comprises the <a
@@ -69,23 +46,8 @@ skills to researchers.
 
 {% include dc/intro.html %}
 
-{% comment %}
-AUDIENCE
-
-Explain who your audience is.  (In particular, tell readers if the
-workshop is only open to people from a particular institution.
-{% endcomment %}
-
 {% include dc/who.html %}
 
-{% comment %}
-LOCATION
-
-This block displays the address and links to maps showing directions
-if the latitude and longitude of the workshop have been set.  You
-can use https://www.latlong.net/ to find the lat/long of an
-address.
-{% endcomment %}
 {% assign begin_address = page.address | slice: 0, 4 | downcase  %}
 {% if page.address == "online" %}
 {% assign online = "true_private" %}
@@ -98,10 +60,6 @@ address.
 <p id="where">
   <strong>Where:</strong>
   {{page.address}}.
-  Get directions with
-  <a href="//www.openstreetmap.org/?mlat={{page.latitude}}&mlon={{page.longitude}}&zoom=16">OpenStreetMap</a>
-  or
-  <a href="//maps.google.com/maps?q={{page.latitude}},{{page.longitude}}">Google Maps</a>.
 </p>
 {% elsif online == "true_public" %}
 <p id="where">
@@ -117,24 +75,13 @@ address.
 </p>
 {% endif %}
 
-{% comment %}
-DATE
-
-This block displays the date and links to Google Calendar.
-{% endcomment %}
 {% if page.humandate %}
 <p id="when">
   <strong>When:</strong>
   {{page.humandate}}.
-  {% include workshop_calendar.html %}
 </p>
 {% endif %}
 
-{% comment %}
-SPECIAL REQUIREMENTS
-
-Modify the block below if there are any special requirements.
-{% endcomment %}
 <p id="requirements">
   <strong>Requirements:</strong>
   {% if online == "false" %}
@@ -147,12 +94,6 @@ Modify the block below if there are any special requirements.
   They should have a few specific software packages installed (listed <a href="#setup">below</a>).
 </p>
 
-{% comment %}
-ACCESSIBILITY
-
-Modify the block below if there are any barriers to accessibility or
-special instructions.
-{% endcomment %}
 <p id="accessibility">
   <strong>Accessibility:</strong>
 {% if online == "false" %}
@@ -178,12 +119,12 @@ special instructions.
   We encourage you to share any information that would be helpful to make your Carpentries experience accessible.
 </p>
 {% endif %}
+{% endcomment %}
 
 {% comment %}
 CONTACT EMAIL ADDRESS
 
 Display the contact email address set in the configuration file.
-{% endcomment %}
 <p id="contact">
   <strong>Contact:</strong>
   Please email
@@ -204,12 +145,6 @@ Display the contact email address set in the configuration file.
   for more information.
 </p>
 
-<p id="roles">
-  <strong>Roles:</strong>
-  To learn more about the roles at the workshop (who will be doing what),
-  refer to <a href="https://carpentries.org/workshop_faq/#what-are-the-roles-of-everyone-participating-in-a-workshop">our Workshop FAQ</a>.
-</p>
-
 <hr/>
 
 {% comment%}
@@ -227,6 +162,7 @@ Everyone who participates in Carpentries activities is required to conform to th
   </a>
 </p>
 <hr/>
+{% endcomment %}
 
 
 {% comment %}
@@ -241,7 +177,7 @@ e.g., '2015-06-10-esu'.
 
 Note we also have a CodiMD (the open-source version of HackMD)
 available at https://codimd.carpentries.org
-{% endcomment %}
+
 {% if page.collaborative_notes %}
 <h2 id="collaborative_notes">Collaborative Notes</h2>
 
@@ -250,15 +186,15 @@ We will use this <a href="{{ page.collaborative_notes }}">collaborative document
 </p>
 <hr/>
 {% endif %}
-
+{% endcomment %}
 
 {% comment %}
 SURVEYS - DO NOT EDIT SURVEY LINKS
-{% endcomment %}
 <h2 id="surveys">Surveys</h2>
 <p>Please be sure to complete this survey after the workshop.</p>
 <p><a href="{{ site.post_survey }}">Post-workshop Survey</a></p>
 <hr/>
+{% endcomment %}
 
 
 {% comment %}

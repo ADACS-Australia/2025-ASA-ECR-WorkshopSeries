@@ -112,7 +112,7 @@ ether_pad: "https://docs.google.com/document/d/1606WNY5-5iWLN9Nqit9t4mqdXZ3AH5A9
 
 # Surveys.
 pre_survey: ""
-post_survey: "https://forms.gle/YwvBeg8ExUSGbYo78"
+post_survey: ""
 
 # Start time in minutes (0 to be clock-independent, 540 to show a start at 09:00 am).
 start_time: 0
