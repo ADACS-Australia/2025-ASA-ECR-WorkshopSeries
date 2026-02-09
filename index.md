@@ -147,9 +147,8 @@ Display the contact email address set in the configuration file.
 
 <hr/>
 
-{% comment%}
 CODE OF CONDUCT
-{% endcomment %}
+
 <h2 id="code-of-conduct">Code of Conduct</h2>
 
 <p>
